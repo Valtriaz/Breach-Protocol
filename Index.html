@@ -25,8 +25,174 @@
     <meta property="twitter:description" content="" />
     <meta property="twitter:image" content="https://raw.githubusercontent.com/Valtriaz/Library/main/Breach-Protocol-banner.png" />
 
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for main text, Roboto Mono for code/console -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="main.css" />
+
 </head>
 <body>
-Hello World
+
+<div id="terminal-container" class="relative">
+        <!-- Top Bar / Header -->
+        <header class="header-bar">
+            <div class="text-2xl font-bold text-[#00F0FF] flex items-center">
+                <span class="glitch-text">BREACH PROTOCOL // CIPHER</span>
+                <span class="ml-4 text-sm text-gray-500">
+                    <span class="text-[#00FF99]">&#x25CF;</span> <span id="status-indicator">ONLINE</span>
+                </span>
+            </div>
+            <div class="flex items-center space-x-6 text-base font-semibold">
+                <span class="text-gray-400">TRACE: <span id="trace-level" class="text-[#EF4444]">0%</span></span>
+                <span class="text-gray-400">CREDITS: <span id="credits" class="text-[#FFC107]">C 500</span></span>
+                <span class="text-gray-400">SCORE: <span id="hack-score" class="text-[#00FF99]">0</span></span>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-6 overflow-hidden flex flex-col">
+            <!-- Navigation Tabs -->
+            <nav class="flex justify-start mb-6">
+                <div id="nav-sanctuary" class="nav-tab active" data-view="sanctuary">SANCTUARY</div>
+                <div id="nav-hacking" class="nav-tab" data-view="hacking">HACKING CONSOLE</div>
+                <div id="nav-network" class="nav-tab" data-view="network-map">NETWORK MAP</div>
+                <div id="nav-tools" class="nav-tab" data-view="tools">TOOLS & EXPLOITS</div>
+                <div id="nav-logs" class="nav-tab" data-view="data-logs">DATA LOGS</div>
+            </nav>
+
+            <!-- View Containers -->
+            <div id="view-sanctuary" class="view-content flex flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
+                <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// CURRENT MISSION: FINANCIAL HUB BREACH</h2>
+                <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar">
+                    <p class="text-gray-300 leading-relaxed mb-6">
+                        The Nexus's primary financial hub is a critical node. Infiltrate its core systems, extract encrypted transaction logs, and deploy the 'Ghost Protocol' virus to cripple their credit flow for 24 hours. Minimal collateral, maximum impact. Speed is essential to avoid detection by their Cerberus AI.
+                    </p>
+                    <button id="start-hack-button" class="btn">
+                        <span class="flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-8V7a1 1 0 112 0v3h2a1 1 0 110 2h-2v2a1 1 0 11-2 0v-2H7a1 1 0 110-2h2z" clip-rule="evenodd"></path></svg>
+                            INITIATE BREACH
+                        </span>
+                    </button>
+
+                    <h3 class="text-2xl font-bold text-[#00FF99] mt-8 mb-4">// RECENT ACTIVITY LOGS</h3>
+                    <div id="activity-feed" class="console-text h-64">
+                        <span class="text-[#00FF99]">[LOG] OS booting to Breach Protocol Kernel v3.1...</span><br>
+                        <span class="text-[#00FF99]">[LOG] Establishing secure darknet routing...</span><br>
+                        <span class="text-[#FFC107]">[ALERT] Incoming encrypted message from "UNKNOWN"...</span><br>
+                        <span class="text-[#E0E7FF]">[UNKNOWN]: "They know you're coming, Cipher. Stay sharp."</span><br>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-hacking" class="view-content hidden flex flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
+                <h2 class="text-3xl font-bold text-[#EF4444] mb-6">// ACTIVE BREACH: NEXUS FINANCIAL HUB</h2>
+                <div class="progress-bar-container w-full h-3 mb-4">
+                    <div id="hack-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+                </div>
+
+                <!-- Hacking Console Area -->
+                <div id="hacking-console" class="console-text flex-grow mb-6 h-1/2">
+                    <span class="text-[#00FF99]>> Connecting to target: 192.168.1.137...</span><br>
+                    <span class="text-[#FFC107]>> Running preliminary scans. Beware Cerberus AI countermeasures.</span><br>
+                </div>
+
+                <!-- Puzzle Area (Dynamic) -->
+                <div id="puzzle-area" class="bg-[#1A222F] p-5 rounded-lg border border-[#00F0FF] hidden flex flex-col items-center justify-center flex-shrink-0">
+                    <p class="text-gray-300 text-lg mb-4" id="puzzle-instructions">
+                        Enter the highlighted sequence:
+                    </p>
+                    <div id="code-sequence-display" class="flex flex-wrap justify-center gap-3 mb-4">
+                        <!-- Code nodes will be dynamically inserted here -->
+                    </div>
+                    <div id="puzzle-feedback" class="text-xl font-bold mb-4"></div>
+                    <button id="reset-puzzle-btn" class="btn btn-red hidden">RETRY SEQUENCE</button>
+                </div>
+
+                <div class="mt-6 flex flex-col sm:flex-row gap-4">
+                    <button id="bypass-firewall-btn" class="btn flex-grow">
+                        <span class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 9V7a5 5 0 0110 0v2h2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2h2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                            BYPASS FIREWALL
+                        </span>
+                    </button>
+                    <button id="extract-data-btn" class="btn btn-green flex-grow btn-disabled" disabled>
+                        <span class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2h3V1a1 1 0 011-1h2a1 1 0 011 1v2h3a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 2a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+                            EXTRACT DATA
+                        </span>
+                    </button>
+                    <button id="abort-hack-btn" class="btn btn-red flex-grow">
+                        <span class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                            ABORT BREACH
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Other Views (Placeholders) -->
+            <div id="view-network-map" class="view-content hidden flex flex-col h-full items-center justify-center bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
+                <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// NETWORK MAP: VISUALIZING THE NEXUS</h2>
+                <p class="text-gray-400 text-center text-lg mb-8">
+                    A dynamic, interactive visualization of The Nexus's global digital footprint will be rendered here. Track their server farms, communication nodes, and surveillance networks in real-time. Identify weak points, plan your next strike, and watch as their empire crumbles.
+                </p>
+                <img src="https://placehold.co/700x450/161b22/00ff99?text=NETWORK+MAP+RENDERING" alt="Network Map Placeholder" class="mt-4 rounded-lg shadow-xl border border-[#00F0FF]">
+            </div>
+
+            <div id="view-tools" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar">
+                <h2 class="text-3xl font-bold text-[#FFC107] mb-6">// TOOLS & EXPLOITS: YOUR ARSENAL</h2>
+                <div id="upgrades-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                    <!-- Upgrade Card 1 -->
+                    <div class="upgrade-card" data-upgrade="iceBreaker">
+                        <h3 class="upgrade-title">ICE Breaker Suite</h3>
+                        <p class="upgrade-description">Advanced algorithms to slow down Intrusion Countermeasure Electronics. Reduces trace level increase rate by 30%.</p>
+                        <div class="upgrade-footer">
+                            <span class="upgrade-cost">COST: C 400</span>
+                            <button class="btn btn-green upgrade-purchase-btn">PURCHASE</button>
+                        </div>
+                    </div>
+                    <!-- Upgrade Card 2 -->
+                    <div class="upgrade-card" data-upgrade="sequenceDecryptor">
+                        <h3 class="upgrade-title">Sequence Decryptor</h3>
+                        <p class="upgrade-description">Pre-calculates common encryption patterns. Reduces required puzzle sequence length by 1.</p>
+                        <div class="upgrade-footer">
+                            <span class="upgrade-cost">COST: C 600</span>
+                            <button class="btn btn-green upgrade-purchase-btn">PURCHASE</button>
+                        </div>
+                    </div>
+                    <!-- Upgrade Card 3 -->
+                    <div class="upgrade-card" data-upgrade="creditScrubber">
+                        <h3 class="upgrade-title">Credit Scrubber</h3>
+                        <p class="upgrade-description">A sophisticated laundering tool that finds hidden credit caches. Increases base credit rewards from hacks by 50%.</p>
+                        <div class="upgrade-footer">
+                            <span class="upgrade-cost">COST: C 350</span>
+                            <button class="btn btn-green upgrade-purchase-btn">PURCHASE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-data-logs" class="view-content hidden flex flex-col h-full items-center justify-center bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
+                <h2 class="text-3xl font-bold text-[#FF00FF] mb-6">// DATA LOGS: COMPROMISED INTEL</h2>
+                <p class="text-gray-400 text-center text-lg mb-8">
+                    Every piece of encrypted data, every compromised communication, and every dark secret you uncover is stored here. Revisit critical intel, review evidence against The Nexus, and piece together the full narrative of your framing.
+                </p>
+                <img src="https://placehold.co/700x450/161b22/ff00ff?text=DECRYPTED+ARCHIVES" alt="Data Logs Placeholder" class="mt-4 rounded-lg shadow-xl border border-[#FF00FF]">
+            </div>
+        </main>
+    </div>
+
+    <!-- Global Message Modal -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" class="text-2xl font-bold text-[#00F0FF] mb-4"></h3>
+            <p id="modal-message" class="text-gray-300"></p>
+            <button id="modal-close-btn" class="btn">OK</button>
+        </div>
+    </div>
+
+    <script src="app.js" defer></script>
+
 </body>
 </html>
