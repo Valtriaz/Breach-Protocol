@@ -29,7 +29,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts - Inter for main text, Roboto Mono for code/console -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="css/main.css" />
+
+    <!-- Audio Elements -->
+    <audio id="sfx-ui-click" src="assets/sounds/ui_click.mp3" preload="auto"></audio>
+    <audio id="sfx-puzzle-success" src="assets/sounds/puzzle_success.mp3" preload="auto"></audio>
+    <audio id="sfx-puzzle-fail" src="assets/sounds/puzzle_fail.mp3" preload="auto"></audio>
+    <audio id="sfx-hack-start" src="assets/sounds/hack_start.mp3" preload="auto"></audio>
+    <audio id="sfx-hack-complete" src="assets/sounds/hack_complete.mp3" preload="auto"></audio>
+    <audio id="sfx-hack-abort" src="assets/sounds/hack_abort.mp3" preload="auto"></audio>
+    <audio id="sfx-modal-open" src="assets/sounds/modal_open.mp3" preload="auto"></audio>
+    <audio id="sfx-modal-close" src="assets/sounds/modal_close.mp3" preload="auto"></audio>
+    <audio id="sfx-trace-warning" src="assets/sounds/trace_warning.mp3" preload="auto"></audio>
+    <audio id="sfx-node-unlocked" src="assets/sounds/node_unlocked.mp3" preload="auto"></audio>
+    <audio id="sfx-game-over" src="assets/sounds/game_over.mp3" preload="auto"></audio>
+    <audio id="sfx-game-win" src="assets/sounds/game_win.mp3" preload="auto"></audio>
+    <audio id="bgm-ambiance" src="assets/sounds/background_ambiance.mp3" loop preload="auto" muted></audio>
 
 </head>
 <body>
@@ -38,7 +53,7 @@
         <!-- Top Bar / Header -->
         <header class="header-bar">
             <div class="text-2xl font-bold text-[#00F0FF] flex items-center">
-                <span class="glitch-text">BREACH PROTOCOL // CIPHER</span>
+                <span class="glitch-text" data-text="BREACH PROTOCOL // CIPHER">BREACH PROTOCOL // CIPHER</span>
                 <span class="ml-4 text-sm text-gray-500">
                     <span class="text-[#00FF99]">&#x25CF;</span> <span id="status-indicator">ONLINE</span>
                 </span>
@@ -63,17 +78,22 @@
 
             <!-- View Containers -->
             <div id="view-sanctuary" class="view-content flex flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
-                <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// CURRENT MISSION: FINANCIAL HUB BREACH</h2>
+                <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// YOUR SANCTUARY</h2>
                 <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar">
                     <p class="text-gray-300 leading-relaxed mb-6">
-                        The Nexus's primary financial hub is a critical node. Infiltrate its core systems, extract encrypted transaction logs, and deploy the 'Ghost Protocol' virus to cripple their credit flow for 24 hours. Minimal collateral, maximum impact. Speed is essential to avoid detection by their Cerberus AI.
+                        They framed you, Cipher. Wiped your identity, branded you a criminal. From this secure terminal, you can fight back. Breach their network, uncover the truth piece by piece, and expose the conspiracy they call "Project Chimera". Your first step is to find a weak point in their outer defenses.
                     </p>
-                    <button id="start-hack-button" class="btn">
-                        <span class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-8V7a1 1 0 112 0v3h2a1 1 0 110 2h-2v2a1 1 0 11-2 0v-2H7a1 1 0 110-2h2z" clip-rule="evenodd"></path></svg>
-                            INITIATE BREACH
-                        </span>
-                    </button>
+                    <div class="flex flex-wrap gap-4">
+                        <button id="start-hack-button" class="btn">
+                            <span class="flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-8V7a1 1 0 112 0v3h2a1 1 0 110 2h-2v2a1 1 0 11-2 0v-2H7a1 1 0 110-2h2z" clip-rule="evenodd"></path></svg>
+                                INITIATE BREACH
+                            </span>
+                        </button>
+                        <button id="save-game-btn" class="btn btn-green">SAVE PROGRESS</button>
+                        <button id="load-game-btn" class="btn">LOAD PROGRESS</button>
+                    </div>
+
 
                     <h3 class="text-2xl font-bold text-[#00FF99] mt-8 mb-4">// RECENT ACTIVITY LOGS</h3>
                     <div id="activity-feed" class="console-text h-64">
@@ -86,7 +106,7 @@
             </div>
 
             <div id="view-hacking" class="view-content hidden flex flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
-                <h2 class="text-3xl font-bold text-[#EF4444] mb-6">// ACTIVE BREACH: NEXUS FINANCIAL HUB</h2>
+                <h2 id="hacking-view-title" class="text-3xl font-bold text-[#EF4444] mb-6" data-text="// ACTIVE BREACH: STANDING BY">// ACTIVE BREACH: STANDING BY</h2>
                 <div class="progress-bar-container w-full h-3 mb-4">
                     <div id="hack-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
                 </div>
@@ -98,16 +118,38 @@
                 </div>
 
                 <!-- Puzzle Area (Dynamic) -->
-                <div id="puzzle-area" class="bg-[#1A222F] p-5 rounded-lg border border-[#00F0FF] hidden flex flex-col items-center justify-center flex-shrink-0">
-                    <p class="text-gray-300 text-lg mb-4" id="puzzle-instructions">
-                        Enter the highlighted sequence:
-                    </p>
-                    <div id="code-sequence-display" class="flex flex-wrap justify-center gap-3 mb-4">
-                        <!-- Code nodes will be dynamically inserted here -->
+                <div id="puzzle-container" class="bg-[#1A222F] p-5 rounded-lg border border-[#00F0FF] hidden flex-col items-center justify-center flex-shrink-0">
+                    <!-- Sequence Puzzle -->
+                    <div id="sequence-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
+                        <p class="text-gray-300 text-lg mb-4" id="sequence-instructions">Enter the highlighted sequence:</p>
+                        <div id="code-sequence-display" class="flex flex-wrap justify-center gap-3 mb-4">
+                            <!-- Code nodes will be dynamically inserted here -->
+                        </div>
                     </div>
-                    <div id="puzzle-feedback" class="text-xl font-bold mb-4"></div>
+
+                    <!-- Pathfinding Puzzle -->
+                    <div id="pathfinding-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
+                        <p class="text-gray-300 text-lg mb-4" id="pathfinding-instructions">Create a direct path from START to END.</p>
+                        <div id="pathfinding-grid" class="mb-4">
+                            <!-- Pathfinding grid will be dynamically inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Timed Input Puzzle -->
+                    <div id="timed-input-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
+                        <p class="text-gray-300 text-lg mb-4" id="timed-input-instructions">Type the sequence before the timer expires!</p>
+                        <div id="timed-input-sequence" class="text-3xl font-bold font-mono text-[#00F0FF] tracking-widest mb-4"></div>
+                        <div id="timed-input-timer-container" class="w-full h-2 bg-[#0D1117] rounded-full mb-4 border border-[#EF4444]">
+                            <div id="timed-input-timer" class="h-full bg-gradient-to-r from-red-500 to-yellow-500 rounded-full" style="width: 100%; transition: width 0.1s linear;"></div>
+                        </div>
+                        <input type="text" id="timed-input-field" class="w-full bg-[#0D1117] border border-[#00F0FF] text-[#00FF99] text-center text-2xl p-2 rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-[#00F0FF]">
+                    </div>
+
+                    <!-- Common Feedback and Reset Button -->
+                    <div id="puzzle-feedback" class="text-xl font-bold mt-4"></div>
                     <button id="reset-puzzle-btn" class="btn btn-red hidden">RETRY SEQUENCE</button>
                 </div>
+
 
                 <div class="mt-6 flex flex-col sm:flex-row gap-4">
                     <button id="bypass-firewall-btn" class="btn flex-grow">
@@ -132,12 +174,11 @@
             </div>
 
             <!-- Other Views (Placeholders) -->
-            <div id="view-network-map" class="view-content hidden flex flex-col h-full items-center justify-center bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
+            <div id="view-network-map" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar">
                 <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// NETWORK MAP: VISUALIZING THE NEXUS</h2>
-                <p class="text-gray-400 text-center text-lg mb-8">
-                    A dynamic, interactive visualization of The Nexus's global digital footprint will be rendered here. Track their server farms, communication nodes, and surveillance networks in real-time. Identify weak points, plan your next strike, and watch as their empire crumbles.
-                </p>
-                <img src="https://placehold.co/700x450/161b22/00ff99?text=NETWORK+MAP+RENDERING" alt="Network Map Placeholder" class="mt-4 rounded-lg shadow-xl border border-[#00F0FF]">
+                <div id="network-map-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                    <!-- Network nodes will be dynamically inserted here by JavaScript -->
+                </div>
             </div>
 
             <div id="view-tools" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar">
@@ -175,10 +216,9 @@
 
             <div id="view-data-logs" class="view-content hidden flex flex-col h-full items-center justify-center bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
                 <h2 class="text-3xl font-bold text-[#FF00FF] mb-6">// DATA LOGS: COMPROMISED INTEL</h2>
-                <p class="text-gray-400 text-center text-lg mb-8">
-                    Every piece of encrypted data, every compromised communication, and every dark secret you uncover is stored here. Revisit critical intel, review evidence against The Nexus, and piece together the full narrative of your framing.
-                </p>
-                <img src="https://placehold.co/700x450/161b22/ff00ff?text=DECRYPTED+ARCHIVES" alt="Data Logs Placeholder" class="mt-4 rounded-lg shadow-xl border border-[#FF00FF]">
+                <div id="data-logs-list" class="space-y-6 w-full">
+                    <!-- Discovered data logs will be dynamically inserted here -->
+                </div>
             </div>
         </main>
     </div>
@@ -192,7 +232,30 @@
         </div>
     </div>
 
-    <script src="app.js" defer></script>
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content game-over-modal-content">
+            <h3 id="game-over-title" class="text-2xl font-bold text-[#EF4444] mb-4 glitch-text" data-text="TRACE COMPLETE">TRACE COMPLETE</h3>
+            <p id="game-over-message" class="text-gray-300">Your location has been compromised. The Nexus AI has locked you out. All local data has been wiped.</p>
+            <div class="mt-6 flex gap-4 justify-center">
+                <button id="restart-game-btn" class="btn btn-red">RESTART GAME</button>
+                <button id="load-from-game-over-btn" class="btn">LOAD LAST SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Complete Modal -->
+    <div id="game-complete-modal" class="modal">
+        <div class="modal-content game-complete-modal-content">
+            <h3 id="game-complete-title" class="text-2xl font-bold text-[#00FF99] mb-4">BREACH COMPLETE</h3>
+            <p id="game-complete-message" class="text-gray-300">You've done it, Cipher. You exposed Project Chimera and cleared your name. The Nexus is in chaos. You are free.</p>
+            <div class="mt-6 flex gap-4 justify-center">
+                <button id="new-game-btn" class="btn btn-green">START NEW GAME</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 
 </body>
 </html>

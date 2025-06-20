@@ -1,0 +1,359 @@
+/* --- CSS Variables for Theming --- */
+:root {
+    --color-bg: #0A0F14;
+    --color-bg-secondary: #0D1117;
+    --color-bg-tertiary: #1A222F;
+    --color-border: #2A3F57;
+    --color-primary: #00F0FF; /* Cyan */
+    --color-secondary: #00FF99; /* Green */
+    --color-accent: #FFC107; /* Yellow */
+    --color-danger: #EF4444; /* Red */
+    --color-magenta: #FF00FF;
+    --color-text: #E0E7FF;
+    --color-text-muted: #8B949E;
+    --font-main: 'Inter', sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
+}
+
+/* --- Base Styles --- */
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-main);
+    overflow: hidden; /* Prevent body scroll */
+}
+
+#terminal-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: var(--color-bg);
+    border: 2px solid var(--color-border);
+    box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.2), 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Header --- */
+.header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+/* --- Navigation --- */
+.nav-tab {
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--color-text-muted);
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-transform: uppercase;
+}
+
+.nav-tab:hover {
+    color: var(--color-primary);
+    background-color: rgba(0, 240, 255, 0.05);
+}
+
+.nav-tab.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+/* --- Buttons --- */
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 0 5px rgba(0, 240, 255, 0.3), inset 0 0 5px rgba(0, 240, 255, 0.2);
+}
+
+.btn:hover:not(.btn-disabled) {
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+    box-shadow: 0 0 15px var(--color-primary);
+}
+
+.btn-green {
+    color: var(--color-secondary);
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 5px rgba(0, 255, 153, 0.3), inset 0 0 5px rgba(0, 255, 153, 0.2);
+}
+.btn-green:hover:not(.btn-disabled) {
+    background-color: var(--color-secondary);
+    color: var(--color-bg);
+    box-shadow: 0 0 15px var(--color-secondary);
+}
+
+.btn-red {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.3), inset 0 0 5px rgba(239, 68, 68, 0.2);
+}
+.btn-red:hover:not(.btn-disabled) {
+    background-color: var(--color-danger);
+    color: var(--color-bg-secondary);
+    box-shadow: 0 0 15px var(--color-danger);
+}
+
+.btn-disabled {
+    color: var(--color-text-muted);
+    border-color: var(--color-border);
+    background-color: transparent;
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+/* --- Console & Text --- */
+.console-text {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    font-family: var(--font-mono);
+    overflow-y: auto;
+    border-radius: 4px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* --- Progress Bar --- */
+.progress-bar-container {
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    padding: 2px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-danger) 0%, var(--color-accent) 50%, var(--color-secondary) 100%);
+    border-radius: 9999px;
+    transition: width 0.5s ease-out;
+    box-shadow: 0 0 8px var(--color-secondary);
+}
+
+/* --- Puzzle Specific Styles --- */
+/* Sequence Puzzle */
+.puzzle-node {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.puzzle-node:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+.node-active-highlight {
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary);
+}
+
+/* Pathfinding Puzzle */
+#pathfinding-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 40px);
+    grid-template-rows: repeat(5, 40px);
+    gap: 4px;
+}
+.path-node {
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+.path-node.start { background-color: var(--color-secondary); }
+.path-node.end { background-color: var(--color-danger); }
+.path-node.obstacle { background-color: #333; cursor: not-allowed; }
+.path-node.active { background-color: var(--color-primary); }
+.path-node:not(.obstacle):not(.active):hover { background-color: rgba(0, 240, 255, 0.3); }
+
+/* --- Cards (Network, Upgrades) --- */
+.network-node, .upgrade-card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+}
+.network-node:hover, .upgrade-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+}
+.network-node.locked {
+    opacity: 0.5;
+    border-color: var(--color-border);
+}
+.network-node.locked:hover {
+    box-shadow: none;
+}
+.node-title, .upgrade-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+.node-description, .upgrade-description {
+    color: var(--color-text);
+    font-size: 0.9rem;
+    flex-grow: 1;
+    margin-bottom: 1rem;
+}
+.node-details {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+}
+.upgrade-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+.upgrade-cost, .upgrade-status-owned {
+    font-family: var(--font-mono);
+    font-weight: 700;
+}
+.upgrade-cost { color: var(--color-accent); }
+.upgrade-status-owned { color: var(--color-secondary); }
+
+
+/* --- Data Logs --- */
+.data-log-entry {
+    background-color: rgba(255, 0, 255, 0.05);
+    border-left: 4px solid var(--color-magenta);
+    padding: 1rem;
+}
+.log-entry-title {
+    color: var(--color-magenta);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.log-entry-meta {
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+.log-entry-content {
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+/* --- Modals --- */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 15, 20, 0.8);
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+.modal.modal-show {
+    display: flex;
+}
+.modal-content {
+    background-color: var(--color-bg-secondary);
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-primary);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+}
+.modal-content .btn {
+    margin-top: 1.5rem;
+}
+
+/* Specific modal content styles */
+.game-over-modal-content .glitch-text {
+    font-size: 2.5rem; /* Make game over title larger */
+    margin-bottom: 1rem;
+}
+
+/* --- Animations --- */
+.glitch-text {
+    animation: glitch 1.5s linear infinite;
+}
+
+@keyframes glitch {
+    2%, 64% { transform: translate(2px, 0) skew(0deg); }
+    4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+    62% { transform: translate(0, 0) skew(5deg); }
+}
+.glitch-text:before,
+.glitch-text:after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+}
+.glitch-text:before {
+    animation: glitch-top 1.5s linear infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+}
+@keyframes glitch-top {
+    2%, 64% { transform: translate(2px, -2px); }
+    4%, 60% { transform: translate(-2px, 2px); }
+    62% { transform: translate(13px, -1px) skew(-13deg); }
+}
+.glitch-text:after {
+    animation: glitch-bottom 1.5s linear infinite;
+    clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+    -webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+}
+@keyframes glitch-bottom {
+    2%, 64% { transform: translate(-2px, 0); }
+    4%, 60% { transform: translate(-2px, 0); }
+    62% { transform: translate(-22px, 5px) skew(21deg); }
+}
+
+/* --- Custom Scrollbar --- */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--color-bg-tertiary);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+    border-radius: 4px;
+    border: 2px solid var(--color-bg-tertiary);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-secondary);
+}
