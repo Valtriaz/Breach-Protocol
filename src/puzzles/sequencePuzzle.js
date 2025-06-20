@@ -1,3 +1,4 @@
+// src/puzzles/sequencePuzzle.js
 import { PUZZLE_TYPES } from './puzzleConstants.js';
 
 let sequencePuzzleArea, sequenceInstructions, codeSequenceDisplay, puzzleFeedback, resetPuzzleBtn;

@@ -1,3 +1,4 @@
+// src/puzzles/timedInputPuzzle.js
 import { PUZZLE_TYPES, TIMED_INPUT_TIMER_INITIAL_PERCENT, TIMED_INPUT_TIMER_DECREMENT_PER_INTERVAL, TIMED_INPUT_INTERVAL_MS } from './puzzleConstants.js';
 import { MIN_CREDITS } from '../gameConstants.js';
 
@@ -13,7 +14,6 @@ export const timedInputPuzzle = {
         timedInputTimer = elements.timedInputTimer;
         timedInputField = elements.timedInputField;
         onCompleteCallback = callbacks.onPuzzleComplete;
-        // getMinCredits is no longer needed as MIN_CREDITS is imported directly
     },
 
     activate(node, isBossFight, currentBossStageIndex) {

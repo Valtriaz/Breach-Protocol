@@ -1,3 +1,5 @@
+// src/gameConstants.js
+
 // Game Constants
 export const MAX_PROGRESS = 100;
 export const MAX_TRACE_LEVEL = 100;

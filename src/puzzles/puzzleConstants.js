@@ -1,3 +1,5 @@
+// src/puzzles/puzzleConstants.js
+
 export const PUZZLE_TYPES = {
     SEQUENCE: 'sequence',
     PATHFINDING: 'pathfinding',

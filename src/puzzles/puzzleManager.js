@@ -1,3 +1,4 @@
+// src/puzzles/puzzleManager.js
 import { sequencePuzzle } from './sequencePuzzle.js';
 import { pathfindingPuzzle } from './pathfindingPuzzle.js';
 import { timedInputPuzzle } from './timedInputPuzzle.js';
@@ -6,23 +7,25 @@ import {
     PUZZLE_SUCCESS_SCORE,
     DEFAULT_PUZZLE_FAIL_TRACE_PENALTY,
     BOSS_PUZZLE_FAIL_TRACE_PENALTY,
-    PUZZLE_FEEDBACK_DISPLAY_DELAY, // Corrected import
-} from './puzzleConstants.js'; // Corrected import
+    PUZZLE_FEEDBACK_DISPLAY_DELAY
+} from './puzzleConstants.js';
 import { MAX_TRACE_LEVEL } from '../gameConstants.js';
 
 let puzzleContainer, puzzleFeedback, resetPuzzleBtn;
-let bypassFirewallBtn, extractDataBtn;
 let hackingConsole, traceLevelIndicator, hackScoreDisplay, statusIndicator;
 let audioManager;
 let showMessage, addConsoleMessage;
 
 // Callbacks to update main game state
 let updateTraceLevel, updateHackScore, onPuzzleSuccess, onPuzzleFail;
-let getGameStates; // Function to get current game states like traceLevel, hackScore, etc.
+let getGameStates; // Function to get current game states like traceLevel, hackScore, etc. (from app.js)
+
+// Internal state for puzzle manager
 let puzzleActive = false;
 let currentHackedNode = null;
 let bossFightActive = false;
 let currentBossStageIndex = -1;
+let currentObjectiveType = null; // Stores the type of objective (e.g., 'firewall', 'data') for retry logic
 
 export const puzzleManager = {
     init(elements, callbacks, stateGetters) {
@@ -30,8 +33,6 @@ export const puzzleManager = {
         puzzleContainer = elements.puzzleContainer;
         puzzleFeedback = elements.puzzleFeedback;
         resetPuzzleBtn = elements.resetPuzzleBtn;
-        bypassFirewallBtn = elements.bypassFirewallBtn;
-        extractDataBtn = elements.extractDataBtn;
         hackingConsole = elements.hackingConsole;
         traceLevelIndicator = elements.traceLevelIndicator;
         hackScoreDisplay = elements.hackScoreDisplay;
@@ -85,6 +86,7 @@ export const puzzleManager = {
         currentHackedNode = node;
         bossFightActive = isBoss;
         currentBossStageIndex = bossStageIndex;
+        currentObjectiveType = objectiveType; // Store the objective type for retry logic
 
         let puzzleType;
         let instruction = '';
@@ -108,14 +110,6 @@ export const puzzleManager = {
         puzzleContainer.classList.remove('hidden');
         puzzleContainer.classList.add('flex');
 
-        // Hide/disable regular action buttons during puzzle
-        bypassFirewallBtn.disabled = true; bypassFirewallBtn.classList.add('btn-disabled');
-        extractDataBtn.disabled = true; extractDataBtn.classList.add('btn-disabled');
-
-        // Hide/show action buttons based on boss fight status
-        bypassFirewallBtn.classList.toggle('hidden', bossFightActive);
-        extractDataBtn.classList.toggle('hidden', bossFightActive);
-
         switch (puzzleType) {
             case PUZZLE_TYPES.SEQUENCE:
                 sequencePuzzle.activate(node, isBoss, bossStageIndex, instruction);
@@ -132,7 +126,7 @@ export const puzzleManager = {
     },
 
     handlePuzzleCompletionInternal(isCorrect, puzzleType) {
-        const { traceLevel } = getGameStates(); // traceLevel is dynamic, MAX_TRACE_LEVEL is imported directly
+        const { traceLevel } = getGameStates();
 
         if (isCorrect) {
             audioManager.play('puzzleSuccess');
@@ -141,10 +135,24 @@ export const puzzleManager = {
             addConsoleMessage(hackingConsole, 'HACK', 'Sub-routine successful! Access granted.', 'text-[#00FF99]');
             updateHackScore(PUZZLE_SUCCESS_SCORE);
 
+            const isLastBossStage = bossFightActive && (currentBossStageIndex + 1 >= currentHackedNode.bossStages.length);
+
             setTimeout(() => {
                 this.resetPuzzleUI(); // Reset puzzle UI after delay
+
+                // IMPORTANT: Set puzzleActive to false BEFORE calling onPuzzleSuccess
+                // This ensures app.js gets the correct state when it updates buttons.
+                if (!bossFightActive || isLastBossStage) {
+                    puzzleActive = false;
+                }
+
                 onPuzzleSuccess(bossFightActive, currentBossStageIndex); // Notify app.js
-                puzzleActive = false; // Puzzle is no longer active after feedback
+
+                // Only deactivate the puzzle if it's a regular puzzle OR the very last boss stage.
+                // If it's an intermediate boss stage, keep it active to prevent the main loop from running.
+                if (!bossFightActive || isLastBossStage) {
+                    puzzleActive = false;
+                }
             }, PUZZLE_FEEDBACK_DISPLAY_DELAY);
 
         } else {
@@ -174,12 +182,12 @@ export const puzzleManager = {
     retryCurrentPuzzle() {
         resetPuzzleBtn.classList.add('hidden');
         puzzleFeedback.textContent = ''; // Clear feedback
+        // Re-activate the same puzzle that just failed
         if (bossFightActive) {
-            puzzleManager.activatePuzzle(currentHackedNode, null, true, currentBossStageIndex);
+            this.activatePuzzle(currentHackedNode, null, true, currentBossStageIndex);
         } else {
-            // Determine if it was firewall or data puzzle
-            const { firewallBypassed } = getGameStates();
-            puzzleManager.activatePuzzle(currentHackedNode, firewallBypassed ? 'data' : 'firewall');
+            // Use the stored objective type for the retry
+            this.activatePuzzle(currentHackedNode, currentObjectiveType);
         }
     },
 

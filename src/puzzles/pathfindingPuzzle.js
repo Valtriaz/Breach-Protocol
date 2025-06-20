@@ -1,3 +1,4 @@
+// src/puzzles/pathfindingPuzzle.js
 import { PUZZLE_TYPES } from './puzzleConstants.js';
 
 let pathfindingPuzzleArea, pathfindingGrid, puzzleFeedback, resetPuzzleBtn;

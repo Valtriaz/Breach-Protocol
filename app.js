@@ -94,6 +94,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const AMBIENT_HACK_MESSAGES = [
+        "Scanning for open ports...",
+        "Analyzing packet headers...",
+        "Executing brute-force on root password...",
+        "Cerberus AI ping detected... masking signature.",
+        "Memory buffer overflow attempt in progress...",
+        "Searching for known exploits in kernel version...",
+        "Decrypting data stream fragments...",
+        "Spoofing MAC address...",
+        "Pinging subnet for active devices..."
+    ];
+
     // Game Constants
     const UPGRADES = {
         iceBreaker: { cost: 400, name: "ICE Breaker Suite" },
@@ -103,11 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const NETWORK_NODES = [
         // Story Progression: Surveillance -> Data Archive -> Black Market -> Financial Hub -> Research Lab -> Nexus Core
-        { id: 'surveillance-grid', name: 'Surveillance Grid', description: 'Monitors city-wide comms. A weak point in their outer defenses.', difficulty: 'very-easy', baseReward: 50, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.SEQUENCE }, puzzleLength: 3, isLocked: false, unlocks: ['data-archive'] },
-        { id: 'data-archive', name: 'Data Archive', description: 'Contains historical logs and personnel files. Maybe you can find out who framed you.', difficulty: 'easy', baseReward: 100, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.PATHFINDING }, puzzleLength: 4, isLocked: true, unlocks: ['black-market-server'], intelId: 'data-archive' },
-        { id: 'black-market-server', name: 'Black Market Server', description: 'Untraceable transactions. A good place to find out who paid to have your identity erased.', difficulty: 'easy', baseReward: 120, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.TIMED_INPUT }, puzzleLength: 4, isLocked: true, unlocks: ['financial-hub'], intelId: 'black-market-server' },
-        { id: 'financial-hub', name: 'Financial Hub', description: 'Primary credit exchange. Follow the money to uncover the real conspiracy.', difficulty: 'medium', baseReward: 200, puzzleTypes: { firewall: PUZZLE_TYPES.PATHFINDING, data: PUZZLE_TYPES.TIMED_INPUT }, puzzleLength: 5, isLocked: true, unlocks: ['research-lab'], intelId: 'financial-hub' },
-        { id: 'research-lab', name: 'Research Lab', description: 'Prototype tech and schematics. What are they building in secret?', difficulty: 'medium', baseReward: 250, puzzleTypes: { firewall: PUZZLE_TYPES.TIMED_INPUT, data: PUZZLE_TYPES.PATHFINDING }, puzzleLength: 5, isLocked: true, unlocks: [], intelId: 'research-lab' },
+        { id: 'surveillance-grid', name: 'Surveillance Grid', description: 'Monitors city-wide comms. A weak point in their outer defenses.', difficulty: 'very-easy', baseReward: 50, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.PATHFINDING }, puzzleLength: 3, isLocked: false, unlocks: ['data-archive'] },
+        { id: 'data-archive', name: 'Data Archive', description: 'Contains historical logs and personnel files. Maybe you can find out who framed you.', difficulty: 'easy', baseReward: 100, puzzleTypes: { firewall: PUZZLE_TYPES.TIMED_INPUT, data: PUZZLE_TYPES.SEQUENCE }, puzzleLength: 4, isLocked: false, unlocks: ['black-market-server'], intelId: 'data-archive' },
+        { id: 'black-market-server', name: 'Black Market Server', description: 'Untraceable transactions. A good place to find out who paid to have your identity erased.', difficulty: 'easy', baseReward: 120, puzzleTypes: { firewall: PUZZLE_TYPES.PATHFINDING, data: PUZZLE_TYPES.TIMED_INPUT }, puzzleLength: 4, isLocked: false, unlocks: ['financial-hub'], intelId: 'black-market-server' },
+        { id: 'financial-hub', name: 'Financial Hub', description: 'Primary credit exchange. Follow the money to uncover the real conspiracy.', difficulty: 'medium', baseReward: 200, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.PATHFINDING }, puzzleLength: 6, isLocked: false, unlocks: ['research-lab'], intelId: 'financial-hub' },
+        { id: 'research-lab', name: 'Research Lab', description: 'Prototype tech and schematics. What are they building in secret?', difficulty: 'medium', baseReward: 250, puzzleTypes: { firewall: PUZZLE_TYPES.TIMED_INPUT, data: PUZZLE_TYPES.SEQUENCE }, puzzleLength: 6, isLocked: true, unlocks: [], intelId: 'research-lab' },
         {
             id: 'nexus-core',
             name: 'Nexus Core',
@@ -324,79 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
         puzzleManager.resetPuzzleUI();
         updateHackActionButtons(); // Set initial button state for the hack
         
-        let step = 0;
-        const messages = [
-            ">> Identifying weak encryption protocols...",
-            ">> Exploiting zero-day vulnerability in port 8443...",
-            `>> Initiating firewall bypass protocol for ${node.name}...`, // Now triggers puzzle
-            ">> Injecting 'Ghost Protocol' virus. Payload delivery 20%...",
-            ">> Trace detected! Level increased to 10%!",
-            ">> Data extraction in progress. 50% complete...", // Now triggers puzzle
-            `>> ${node.name} defenses attempting counter-measure. Re-routing packets...`,
-            ">> Trace level critical: 40%! Speed up!",
-            ">> Transaction logs acquiring... 80% complete...",
-            ">> Finalizing data wipe and log deletion...",
-            ">> BREACH COMPLETE. Returning to Sanctuary.",
-        ];
-
         hackInterval = setInterval(() => {
-            // Only progress if not in an active puzzle and not all boss stages are completed
-            if (hackProgress < MAX_PROGRESS && (!puzzleManager.isPuzzleActive() || bossFightActive && currentBossStageIndex >= currentHackedNode.bossStages.length)) {
-                // Progress only advances if no puzzle is active
-                if (!puzzleManager.isPuzzleActive()) {
-                    hackProgress += Math.random() * BASE_HACK_PROGRESS_MAX + BASE_HACK_PROGRESS_MIN; // Base progress
-                    if (bossFightActive) {
-                        hackProgress += Math.random() * BOSS_HACK_PROGRESS_BONUS; // Boss fights might have slightly slower passive progress
-                    }
-                }
-
-                // Apply ICE Breaker upgrade if purchased
-                let traceIncreaseRate = 1.0;
-                if (node.difficulty === 'easy') traceIncreaseRate = 0.8;
-                else if (node.difficulty === 'medium') traceIncreaseRate = 1.0; // Consider a constant for this
-                else if (node.difficulty === 'hard') traceIncreaseRate = 1.2; // Consider a constant for this
-                else if (node.difficulty === 'very-easy') traceIncreaseRate = 0.6;
-                
-                // Apply ICE Breaker upgrade effect
-                if (purchasedUpgrades.iceBreaker) traceIncreaseRate *= 0.7; // 30% reduction
-
-                traceLevel += (Math.random() * BASE_TRACE_INCREASE_MAX + BASE_TRACE_INCREASE_MIN) * traceIncreaseRate;
-                hackProgress = Math.min(hackProgress, MAX_PROGRESS);
-                traceLevel = Math.min(traceLevel, MAX_TRACE_LEVEL);
-
-                hackProgressBar.style.width = `${hackProgress}%`;
-                traceLevelIndicator.textContent = `${Math.floor(traceLevel)}%`;
-
-                // Add messages at certain progress points
-                if (step < messages.length && hackProgress >= (step * (100 / messages.length))) {
-                    if (!puzzleManager.isPuzzleActive() || messages[step].includes('Trace detected') || messages[step].includes('CRITICAL')) {
-                        addConsoleMessage(hackingConsole, 'HACK', messages[step], messages[step].includes('WARNING') || messages[step].includes('CRITICAL') ? 'text-[#EF4444]' : (step % 2 === 0 ? 'text-[#FFC107]' : 'text-[#00FF99]'));
-                    }
-                    step++;
-                }
-
-                // Prevent spamming high trace warning in console and modal
-                if (traceLevel >= TRACE_WARNING_HIGH && !highTraceMessageShown) { // Check flag
-                    addConsoleMessage(hackingConsole, 'CRITICAL', 'EVASIVE MANEUVERS! NEXUS AI IS CLOSING IN!', 'text-[#EF4444]');
-                    statusIndicator.classList.add('glitch-text');
-                    showMessage('HIGH TRACE DETECTED!', 'Cerberus AI is actively tracking your position. Complete your objectives quickly!', true);
-                    highTraceMessageShown = true;
-                }
-                // Prevent spamming critical trace warning in console and modal
-                if (traceLevel >= TRACE_WARNING_CRITICAL && !criticalTraceMessageShown) { // Check flag
-                    addConsoleMessage(hackingConsole, 'CRITICAL', 'CRITICAL TRACE LEVEL! IMMEDIATE ABORT RECOMMENDED!', 'text-[#EF4444]');
-                     showMessage('CRITICAL TRACE!', 'Your position is almost compromised. Abort immediately or risk full exposure!', true);
-                    criticalTraceMessageShown = true;
-                }
-
-                // Check for game over condition
-                if (traceLevel >= MAX_TRACE_LEVEL) {
-                    handleGameOver();
-                    return; // Stop further execution of this interval
-                }
-
-
-            } else {
+            // --- 1. Check for Mission Completion by Progress ---
+            if (hackProgress >= MAX_PROGRESS) {
                 clearInterval(hackInterval);
                 if (firewallBypassed && dataExtracted) { // This condition now also covers boss fight success
                     addConsoleMessage(hackingConsole, 'SYSTEM', `Breach of ${currentHackedNode.name} successful! Data extracted. Logs wiped.`, 'text-[#00FF99]');
@@ -419,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     showMessage('MISSION COMPLETE!', `${currentHackedNode.name} breached. Gained C ${totalReward}.`, false);
-                } else { // Mission failed (either regular or boss fight ran out of time)
+                } else { // Mission failed because objectives were not met in time
                      // If hack failed, trace penalty is applied regardless of upgrades
                      let penaltyCredits = MISSION_FAIL_PENALTY_CREDITS;
                      let penaltyTrace = MISSION_FAIL_PENALTY_TRACE;
@@ -445,6 +387,56 @@ document.addEventListener('DOMContentLoaded', () => {
                     checkMissionUnlocks(); // Check for and unlock new missions
                     addConsoleMessage(document.getElementById('activity-feed'), 'SYSTEM', `Mission "${node.name}" ${firewallBypassed && dataExtracted ? 'COMPLETED' : 'FAILED'}.`, firewallBypassed && dataExtracted ? 'text-[#00FF99]' : 'text-[#EF4444]');
                 }, CONSOLE_MESSAGE_DELAY); // Short delay before returning
+                return; // Stop execution for this tick
+            }
+
+            // --- 2. Check for Game Over by Trace ---
+            if (traceLevel >= MAX_TRACE_LEVEL) {
+                handleGameOver();
+                return; // Stop execution for this tick
+            }
+
+            // --- 3. Progress the Hack if not paused by a puzzle ---
+            const canProgress = !puzzleManager.isPuzzleActive() || (bossFightActive && currentBossStageIndex >= currentHackedNode.bossStages.length);
+            if (canProgress) {
+                // Progress the hack
+                hackProgress += Math.random() * BASE_HACK_PROGRESS_MAX + BASE_HACK_PROGRESS_MIN;
+                if (bossFightActive) {
+                    hackProgress += Math.random() * BOSS_HACK_PROGRESS_BONUS;
+                }
+                hackProgress = Math.min(hackProgress, MAX_PROGRESS);
+                hackProgressBar.style.width = `${hackProgress}%`;
+
+                // Increase the trace
+                let traceIncreaseRate = 1.0;
+                if (node.difficulty === 'easy') traceIncreaseRate = 0.8;
+                else if (node.difficulty === 'medium') traceIncreaseRate = 1.0;
+                else if (node.difficulty === 'hard') traceIncreaseRate = 1.2;
+                else if (node.difficulty === 'very-easy') traceIncreaseRate = 0.6;
+                if (purchasedUpgrades.iceBreaker) traceIncreaseRate *= 0.7;
+                traceLevel += (Math.random() * BASE_TRACE_INCREASE_MAX + BASE_TRACE_INCREASE_MIN) * traceIncreaseRate;
+                traceLevel = Math.min(traceLevel, MAX_TRACE_LEVEL);
+                traceLevelIndicator.textContent = `${Math.floor(traceLevel)}%`;
+
+                // Add ambient hacking chatter
+                if (Math.random() < 0.03) {
+                    const randomIndex = Math.floor(Math.random() * AMBIENT_HACK_MESSAGES.length);
+                    const randomColor = Math.random() < 0.7 ? 'text-[#00FF99]' : 'text-[#FFC107]';
+                    addConsoleMessage(hackingConsole, 'HACK', AMBIENT_HACK_MESSAGES[randomIndex], randomColor);
+                }
+            }
+
+            // --- 4. Display Warnings (runs regardless of progress pause) ---
+            if (traceLevel >= TRACE_WARNING_HIGH && !highTraceMessageShown) {
+                addConsoleMessage(hackingConsole, 'CRITICAL', 'EVASIVE MANEUVERS! NEXUS AI IS CLOSING IN!', 'text-[#EF4444]');
+                statusIndicator.classList.add('glitch-text');
+                showMessage('HIGH TRACE DETECTED!', 'Cerberus AI is actively tracking your position. Complete your objectives quickly!', true);
+                highTraceMessageShown = true;
+            }
+            if (traceLevel >= TRACE_WARNING_CRITICAL && !criticalTraceMessageShown) {
+                addConsoleMessage(hackingConsole, 'CRITICAL', 'CRITICAL TRACE LEVEL! IMMEDIATE ABORT RECOMMENDED!', 'text-[#EF4444]');
+                showMessage('CRITICAL TRACE!', 'Your position is almost compromised. Abort immediately or risk full exposure!', true);
+                criticalTraceMessageShown = true;
             }
         }, 100); // Update every 100ms
     }
@@ -721,13 +713,13 @@ document.addEventListener('DOMContentLoaded', () => {
         puzzleManager.init({ // Initialize puzzle manager with necessary elements and callbacks
             puzzleContainer, puzzleFeedback, resetPuzzleBtn, sequencePuzzleArea, sequenceInstructions, codeSequenceDisplay,
             pathfindingPuzzleArea, pathfindingGrid, timedInputPuzzleArea, timedInputSequence, timedInputTimer, timedInputField,
-            bypassFirewallBtn, extractDataBtn, hackingConsole, traceLevelIndicator, hackScoreDisplay, statusIndicator,
+            hackingConsole, traceLevelIndicator, hackScoreDisplay, statusIndicator,
             audioManager, showMessage, addConsoleMessage // Pass utility functions
         }, {
             updateTraceLevel, updateHackScore, onPuzzleSuccess, onPuzzleFail
         }, {
             getGameStates: () => ({
-                traceLevel, hackScore, purchasedUpgrades, firewallBypassed, dataExtracted // Removed MIN_CREDITS, MAX_TRACE_LEVEL
+                traceLevel, hackScore, purchasedUpgrades, firewallBypassed, dataExtracted
             }) 
         });
         showView('sanctuary');
@@ -757,7 +749,9 @@ document.addEventListener('DOMContentLoaded', () => {
     bypassFirewallBtn.addEventListener('click', () => {
         if (bossFightActive) return;
         if (!firewallBypassed && !puzzleManager.isPuzzleActive()) {
+            addConsoleMessage(hackingConsole, 'USER', 'Attempting to bypass firewall...', 'text-[#00F0FF]');
             puzzleManager.activatePuzzle(currentHackedNode, 'firewall');
+            updateHackActionButtons(); // Immediately update button state
         } else if (firewallBypassed) {
             addConsoleMessage(hackingConsole, 'SYSTEM', 'Firewall already bypassed.', 'text-gray-500');
             showMessage('Info', 'Firewall already bypassed.', false);
@@ -767,7 +761,9 @@ document.addEventListener('DOMContentLoaded', () => {
     extractDataBtn.addEventListener('click', () => {
         if (bossFightActive) return;
         if (firewallBypassed && !dataExtracted && !puzzleManager.isPuzzleActive()) {
+            addConsoleMessage(hackingConsole, 'USER', 'Initiating data extraction...', 'text-[#00F0FF]');
             puzzleManager.activatePuzzle(currentHackedNode, 'data');
+            updateHackActionButtons(); // Immediately update button state
         } else if (!firewallBypassed) {
             addConsoleMessage(hackingConsole, 'SYSTEM', 'Bypass firewall first!', 'text-[#EF4444]');
             showMessage('Error', 'Bypass firewall first!', true);
