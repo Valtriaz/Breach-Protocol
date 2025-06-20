@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navTabs = document.querySelectorAll('.nav-tab');
     const viewContents = document.querySelectorAll('.view-content');
     const startHackButton = document.getElementById('start-hack-button');
+    const terminalContainer = document.getElementById('terminal-container'); // Added reference to main terminal container
     const hackProgressBar = document.getElementById('hack-progress-bar');
     const hackingConsole = document.getElementById('hacking-console');
     const hackingViewTitle = document.getElementById('hacking-view-title');
@@ -94,6 +95,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const AMBIENT_CONSOLE_CHATTTER = [
+        "Packet stream analysis: OK",
+        "Data integrity check: Passed",
+        "Routing table update: Complete",
+        "Firewall logs: Nominal",
+        "System heartbeat: Stable",
+        "Network traffic: Low variance",
+        "Encryption protocols: Active",
+        "Sub-routine checksum: Valid",
+        "Proxy connection: Established"
+    ];
+
     const AMBIENT_HACK_MESSAGES = [
         "Scanning for open ports...",
         "Analyzing packet headers...",
@@ -115,20 +128,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const NETWORK_NODES = [
         // Story Progression: Surveillance -> Data Archive -> Black Market -> Financial Hub -> Research Lab -> Nexus Core
-        { id: 'surveillance-grid', name: 'Surveillance Grid', description: 'Monitors city-wide comms. A weak point in their outer defenses.', difficulty: 'very-easy', baseReward: 50, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.PATHFINDING }, puzzleLength: 3, isLocked: false, unlocks: ['data-archive'] },
-        { id: 'data-archive', name: 'Data Archive', description: 'Contains historical logs and personnel files. Maybe you can find out who framed you.', difficulty: 'easy', baseReward: 100, puzzleTypes: { firewall: PUZZLE_TYPES.TIMED_INPUT, data: PUZZLE_TYPES.SEQUENCE }, puzzleLength: 4, isLocked: false, unlocks: ['black-market-server'], intelId: 'data-archive' },
-        { id: 'black-market-server', name: 'Black Market Server', description: 'Untraceable transactions. A good place to find out who paid to have your identity erased.', difficulty: 'easy', baseReward: 120, puzzleTypes: { firewall: PUZZLE_TYPES.PATHFINDING, data: PUZZLE_TYPES.TIMED_INPUT }, puzzleLength: 4, isLocked: false, unlocks: ['financial-hub'], intelId: 'black-market-server' },
-        { id: 'financial-hub', name: 'Financial Hub', description: 'Primary credit exchange. Follow the money to uncover the real conspiracy.', difficulty: 'medium', baseReward: 200, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.PATHFINDING }, puzzleLength: 6, isLocked: false, unlocks: ['research-lab'], intelId: 'financial-hub' },
-        { id: 'research-lab', name: 'Research Lab', description: 'Prototype tech and schematics. What are they building in secret?', difficulty: 'medium', baseReward: 250, puzzleTypes: { firewall: PUZZLE_TYPES.TIMED_INPUT, data: PUZZLE_TYPES.SEQUENCE }, puzzleLength: 6, isLocked: true, unlocks: [], intelId: 'research-lab' },
+        { id: 'surveillance-grid', name: 'Surveillance Grid', description: 'Monitors city-wide comms. A weak point in their outer defenses.', difficulty: 'very-easy', baseReward: 50, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.PATHFINDING }, puzzleLength: 3, isLocked: false, isCompleted: false, intelId: 'surveillance-grid' },
+        { 
+            id: 'data-archive', name: 'Data Archive', description: 'Contains historical logs and personnel files. Maybe you can find out who framed you.', difficulty: 'easy', baseReward: 100, puzzleTypes: { firewall: PUZZLE_TYPES.TIMED_INPUT, data: PUZZLE_TYPES.SEQUENCE }, puzzleLength: 4, 
+            isLocked: true, isCompleted: false, requirements: { nodes: ['surveillance-grid'] }, intelId: 'data-archive' 
+        },
+        { 
+            id: 'black-market-server', name: 'Black Market Server', description: 'Untraceable transactions. A good place to find out who paid to have your identity erased.', difficulty: 'easy', baseReward: 120, puzzleTypes: { firewall: PUZZLE_TYPES.PATHFINDING, data: PUZZLE_TYPES.TIMED_INPUT }, puzzleLength: 4, 
+            isLocked: true, isCompleted: false, requirements: { nodes: ['surveillance-grid'] }, intelId: 'black-market-server' 
+        },
+        { 
+            id: 'financial-hub', name: 'Financial Hub', description: 'Primary credit exchange. Follow the money to uncover the real conspiracy.', difficulty: 'medium', baseReward: 200, puzzleTypes: { firewall: PUZZLE_TYPES.SEQUENCE, data: PUZZLE_TYPES.PATHFINDING }, puzzleLength: 6, 
+            isLocked: true, isCompleted: false, requirements: { nodes: ['data-archive', 'black-market-server'] }, intelId: 'financial-hub' 
+        },
+        { 
+            id: 'research-lab', name: 'Research Lab', description: 'Prototype tech and schematics. What are they building in secret?', difficulty: 'medium', baseReward: 250, puzzleTypes: { firewall: PUZZLE_TYPES.TIMED_INPUT, data: PUZZLE_TYPES.SEQUENCE }, puzzleLength: 6, 
+            isLocked: true, isCompleted: false, requirements: { nodes: ['financial-hub'] }, intelId: 'research-lab' 
+        },
         {
             id: 'nexus-core',
             name: 'Nexus Core',
             description: 'Central AI processing. The heart of the beast. Time to expose the truth.',
             difficulty: 'hard',
             baseReward: 1000, // Higher reward for boss
-            isLocked: true,
+            isLocked: true, isCompleted: false,
             isBoss: true, // Mark as boss node
-            requiresIntel: ['data-archive', 'financial-hub', 'research-lab'], // Intel required to unlock
+            requirements: { nodes: ['data-archive', 'financial-hub', 'research-lab'] }, // Intel required to unlock
             bossStages: [ // Define stages for the boss fight
                 {
                     objectiveName: 'Core Encryption Bypass',
@@ -154,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const INTEL_LOGS = {
+        'surveillance-grid': { title: 'Initial Access Vector', content: 'Gained initial access through a poorly secured municipal surveillance grid. The path is open to more sensitive parts of the network.' },
         'financial-hub': {
             title: 'Suspicious Transaction Ledger',
             content: 'Encrypted ledger fragment. Multiple large credit transfers from Nexus Corp to an untraceable off-world account codenamed "Project Chimera". The amounts are staggering. This isn\'t just corporate greed; it\'s funding something massive.'
@@ -342,6 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(hackInterval);
                 if (firewallBypassed && dataExtracted) { // This condition now also covers boss fight success
                     addConsoleMessage(hackingConsole, 'SYSTEM', `Breach of ${currentHackedNode.name} successful! Data extracted. Logs wiped.`, 'text-[#00FF99]');
+                    currentHackedNode.isCompleted = true; // Mark node as completed
                     
                     let baseReward = currentHackedNode.baseReward;
                     // Apply Credit Scrubber upgrade if purchased
@@ -419,7 +446,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 traceLevelIndicator.textContent = `${Math.floor(traceLevel)}%`;
 
                 // Add ambient hacking chatter
-                if (Math.random() < 0.03) {
+                // Add ambient hacking chatter (different from critical hack messages)
+                if (Math.random() < 0.05) { // 5% chance each tick
+                    const randomIndex = Math.floor(Math.random() * AMBIENT_CONSOLE_CHATTTER.length);
+                    const randomColor = Math.random() < 0.8 ? 'text-gray-500' : 'text-gray-600'; // More subtle colors for background chatter
+                    addConsoleMessage(hackingConsole, 'AMBIENT', AMBIENT_CONSOLE_CHATTTER[randomIndex], randomColor);
+                }
+
+                // Add critical hack messages (already existing logic)
+                if (Math.random() < 0.03) { // 3% chance each tick
                     const randomIndex = Math.floor(Math.random() * AMBIENT_HACK_MESSAGES.length);
                     const randomColor = Math.random() < 0.7 ? 'text-[#00FF99]' : 'text-[#FFC107]';
                     addConsoleMessage(hackingConsole, 'HACK', AMBIENT_HACK_MESSAGES[randomIndex], randomColor);
@@ -437,6 +472,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 addConsoleMessage(hackingConsole, 'CRITICAL', 'CRITICAL TRACE LEVEL! IMMEDIATE ABORT RECOMMENDED!', 'text-[#EF4444]');
                 showMessage('CRITICAL TRACE!', 'Your position is almost compromised. Abort immediately or risk full exposure!', true);
                 criticalTraceMessageShown = true;
+            }
+
+            // Apply/remove critical trace visual effect
+            if (traceLevel >= TRACE_WARNING_CRITICAL) {
+                terminalContainer.classList.add('critical-trace-effect');
+            } else {
+                terminalContainer.classList.remove('critical-trace-effect');
             }
         }, 100); // Update every 100ms
     }
@@ -460,6 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
         traceLevelIndicator.textContent = `${Math.floor(traceLevel)}%`;
         updateCreditsUI();
         statusIndicator.classList.remove('glitch-text');
+        terminalContainer.classList.remove('critical-trace-effect'); // Ensure effect is off
 
         showMessage('BREACH ABORTED!', 'You retreated from the breach. Minor losses, but the mission failed.', true);
 
@@ -476,10 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderNetworkMap() {
         networkMapGrid.innerHTML = ''; // Clear existing nodes
         NETWORK_NODES.forEach(node => {
-            // Check if node is locked based on story progression
-            const isNodeLocked = node.isLocked && !node.isBoss; // Regular nodes are locked by `isLocked`
-            const isBossLocked = node.isBoss && node.isLocked; // Boss node has special unlock conditions
-            const canHack = !isNodeLocked && (!isBossLocked || (isBossLocked && node.requiresIntel.every(reqId => discoveredLogs.some(log => log.id === reqId))));
+            const canHack = !node.isLocked;
 
             const nodeCard = document.createElement('div');
             nodeCard.classList.add('network-node');
@@ -487,9 +527,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const buttonHtml = canHack
                 ? `<button class="btn btn-green hack-node-btn" data-node-id="${node.id}">HACK NODE</button>`
-                : `<button class="btn btn-disabled" disabled>${node.isBoss ? 'CORE LOCKED' : 'LOCKED'}</button>`;
+                : `<button class="btn btn-disabled" disabled>LOCKED</button>`;
 
             if (!canHack) nodeCard.classList.add('locked');
+            if (node.isCompleted) nodeCard.classList.add('completed');
 
             nodeCard.innerHTML = `
                 <h3 class="node-title">${node.name} ${node.isBoss ? '(BOSS)' : ''}</h3>
@@ -511,11 +552,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const nodeId = hackBtn.dataset.nodeId;
         const selectedNode = NETWORK_NODES.find(node => node.id === nodeId);
 
-        if (!selectedNode || selectedNode.isLocked && !selectedNode.isBoss) { // Basic check for regular locked nodes
-            showMessage('Access Denied', 'This network node is currently locked. Complete previous missions to unlock.', true);
-            return;
-        }
-
+        // Since the button is only enabled for hackable nodes, we can proceed directly.
+        // A check for selectedNode is still good practice.
         if (selectedNode) {
             showView('hacking'); // Switch to hacking view
             startHackSimulation(selectedNode); // Start hack with selected node's parameters
@@ -585,32 +623,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Story Progression Logic ---
     function checkMissionUnlocks() {
-        if (!currentHackedNode) return;
+        let aNodeWasUnlocked = false;
+        NETWORK_NODES.forEach(node => {
+            // Check only locked nodes that have requirements
+            if (node.isLocked && node.requirements && node.requirements.nodes) {
+                const requiredNodes = node.requirements.nodes;
+                
+                // Check if all required nodes have been completed
+                const allRequirementsMet = requiredNodes.every(reqNodeId => {
+                    const requiredNode = NETWORK_NODES.find(n => n.id === reqNodeId);
+                    return requiredNode && requiredNode.isCompleted;
+                });
 
-        // Unlock next nodes in the chain
-        currentHackedNode.unlocks.forEach(nodeIdToUnlock => {
-            const nodeToUnlock = NETWORK_NODES.find(n => n.id === nodeIdToUnlock);
-            if (nodeToUnlock && nodeToUnlock.isLocked) {
-                nodeToUnlock.isLocked = false;
-                addConsoleMessage(document.getElementById('activity-feed'), 'SYSTEM', `New network node available: ${nodeToUnlock.name}`, 'text-[#00F0FF]');
+                if (allRequirementsMet) {
+                    node.isLocked = false;
+                    aNodeWasUnlocked = true;
+                    addConsoleMessage(document.getElementById('activity-feed'), 'SYSTEM', `New network node available: ${node.name}`, 'text-[#00F0FF]');
+                    if (node.isBoss) {
+                         addConsoleMessage(document.getElementById('activity-feed'), 'CRITICAL', `All critical intel acquired. The path to the Nexus Core is open. End this.`, 'text-[#EF4444]');
+                         showMessage('NEXUS CORE UNLOCKED', 'You have pieced together the conspiracy. It\'s time to take down their central server and clear your name.', false);
+                    }
+                }
             }
         });
 
-        // Check for final mission unlock (Nexus Core)
-        const nexusCoreNode = NETWORK_NODES.find(n => n.id === 'nexus-core');
-        if (nexusCoreNode && nexusCoreNode.isLocked) {
-            const requiredIntelFound = nexusCoreNode.requiresIntel.every(requiredId =>
-                discoveredLogs.some(log => log.id === requiredId)
-            );
-
-            if (requiredIntelFound) {
-                nexusCoreNode.isLocked = false;
-                addConsoleMessage(document.getElementById('activity-feed'), 'CRITICAL', `All critical intel acquired. The path to the Nexus Core is open. End this.`, 'text-[#EF4444]');
-                showMessage('NEXUS CORE UNLOCKED', 'You have pieced together the conspiracy. It\'s time to take down their central server and clear your name.', false);
-            }
+        if (aNodeWasUnlocked) {
+            renderNetworkMap(); // Refresh the map only if something changed
         }
-
-        renderNetworkMap(); // Refresh the map to show unlocked nodes
     }
 
     // --- Save/Load Logic ---
@@ -620,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
             purchasedUpgrades: purchasedUpgrades,
             discoveredLogs: discoveredLogs,
             // We only need to save the lock status of each node
-            networkNodesState: NETWORK_NODES.map(node => ({ id: node.id, isLocked: node.isLocked }))
+            networkNodesState: NETWORK_NODES.map(node => ({ id: node.id, isLocked: node.isLocked, isCompleted: node.isCompleted }))
         };
 
         localStorage.setItem('breachProtocolSaveData', JSON.stringify(gameState));
@@ -643,6 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const nodeToUpdate = NETWORK_NODES.find(n => n.id === savedNode.id);
                         if (nodeToUpdate) {
                             nodeToUpdate.isLocked = savedNode.isLocked;
+                            nodeToUpdate.isCompleted = savedNode.isCompleted || false; // Handle old saves without this property
                         }
                     });
                 }

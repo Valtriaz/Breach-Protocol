@@ -148,11 +148,6 @@ export const puzzleManager = {
 
                 onPuzzleSuccess(bossFightActive, currentBossStageIndex); // Notify app.js
 
-                // Only deactivate the puzzle if it's a regular puzzle OR the very last boss stage.
-                // If it's an intermediate boss stage, keep it active to prevent the main loop from running.
-                if (!bossFightActive || isLastBossStage) {
-                    puzzleActive = false;
-                }
             }, PUZZLE_FEEDBACK_DISPLAY_DELAY);
 
         } else {
