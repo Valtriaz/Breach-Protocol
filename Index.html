@@ -8,7 +8,7 @@
     <meta name="description" content="You've been framed. In Breach Protocol, a cyberpunk hacking game, you must breach corporate networks, uncover a conspiracy, and clear your name.">
     <title>Breach Protocol</title>
     <link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
-    <link rel="icon" type="image/x-icon" href="Breach_Protocol_LOGO2.png" />
+    <link rel="icon" type="image/x-icon" href="Breach_Protocol_Logo2.png" />
 
     <!-- OG Tags -->
     <meta property="og:title" content="Breach Protocol" />
@@ -54,16 +54,16 @@
         <!-- Main Content Area -->
         <main class="flex-grow p-6 overflow-hidden flex flex-col">
             <!-- Navigation Tabs -->            
-            <nav class="flex justify-start mb-6" id="main-nav-tabs">
-                <button type="button" id="nav-sanctuary" class="nav-tab active" data-view="sanctuary">SANCTUARY</button>
-                <button type="button" id="nav-network" class="nav-tab" data-view="network-map">NETWORK MAP</button>
-                <button type="button" id="nav-tools" class="nav-tab" data-view="tools">TOOLS & EXPLOITS</button>
-                <button type="button" id="nav-logs" class="nav-tab" data-view="data-logs">DATA LOGS</button>
-                <button type="button" id="nav-settings" class="nav-tab" data-view="settings">SETTINGS</button>
+            <nav class="flex justify-start mb-6" id="main-nav-tabs" role="tablist" aria-label="Main Navigation">
+                <button type="button" id="nav-sanctuary" class="nav-tab active" data-view="sanctuary" role="tab" aria-controls="view-sanctuary" aria-selected="true">SANCTUARY</button>
+                <button type="button" id="nav-network" class="nav-tab" data-view="network-map" role="tab" aria-controls="view-network-map" aria-selected="false">NETWORK MAP</button>
+                <button type="button" id="nav-tools" class="nav-tab" data-view="tools" role="tab" aria-controls="view-tools" aria-selected="false">TOOLS & EXPLOITS</button>
+                <button type="button" id="nav-logs" class="nav-tab" data-view="data-logs" role="tab" aria-controls="view-data-logs" aria-selected="false">DATA LOGS</button>
+                <button type="button" id="nav-settings" class="nav-tab" data-view="settings" role="tab" aria-controls="view-settings" aria-selected="false">SETTINGS</button>
             </nav>
 
             <!-- View Containers -->
-            <div id="view-sanctuary" class="view-content flex flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
+            <div id="view-sanctuary" class="view-content flex flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl" role="tabpanel" aria-labelledby="nav-sanctuary">
                 <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// YOUR SANCTUARY</h2>
                 <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar">
                     <p class="text-gray-300 leading-relaxed mb-6">
@@ -90,14 +90,14 @@
             </div>
 
             <!-- Other Views (Placeholders) -->
-            <div id="view-network-map" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar">
+            <div id="view-network-map" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-network">
                 <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// NETWORK MAP: VISUALIZING THE NEXUS</h2>
                 <div id="network-map-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                     <!-- Network nodes will be dynamically inserted here by JavaScript -->
                 </div>
             </div>
 
-            <div id="view-tools" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar">
+            <div id="view-tools" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-tools">
                 <h2 class="text-3xl font-bold text-[#FFC107] mb-6">// TOOLS & EXPLOITS: YOUR ARSENAL</h2>
                 <div id="upgrades-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                     <!-- Upgrade Card 1 -->
@@ -130,14 +130,14 @@
                 </div>
             </div>
 
-            <div id="view-data-logs" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar">
+            <div id="view-data-logs" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-logs">
                 <h2 class="text-3xl font-bold text-[#FF00FF] mb-6">// DATA LOGS: COMPROMISED INTEL</h2>
                 <div id="data-logs-list" class="space-y-6 w-full max-w-4xl mx-auto">
                     <!-- Discovered data logs will be dynamically inserted here -->
                 </div>
             </div>
 
-            <div id="view-settings" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar">
+            <div id="view-settings" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-settings">
                 <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// SYSTEM SETTINGS</h2>
                 <div class="settings-container w-full max-w-2xl mx-auto space-y-8">
                     <div class="setting-item">
@@ -258,7 +258,7 @@
     </div>
 
     <!-- Global Message Modal -->
-    <div id="message-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div id="message-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-message">
         <div class="modal-content">
             <h3 id="modal-title" class="text-2xl font-bold text-[#00F0FF] mb-4"></h3>
             <p id="modal-message" class="text-gray-300"></p>
@@ -269,7 +269,7 @@
     </div>
 
     <!-- Game Over Modal -->
-    <div id="game-over-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+    <div id="game-over-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="game-over-title" aria-describedby="game-over-message">
         <div class="modal-content game-over-modal-content">
             <h3 id="game-over-title" class="text-2xl font-bold text-[#EF4444] mb-4 glitch-text" data-text="TRACE COMPLETE">TRACE COMPLETE</h3>
             <p id="game-over-message" class="text-gray-300">Your location has been compromised. The Nexus AI has locked you out. All local data has been wiped.</p>
@@ -281,7 +281,7 @@
     </div>
 
     <!-- Game Complete Modal -->
-    <div id="game-complete-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="game-complete-title">
+    <div id="game-complete-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="game-complete-title" aria-describedby="game-complete-message">
         <div class="modal-content game-complete-modal-content">
             <h3 id="game-complete-title" class="text-2xl font-bold text-[#00FF99] mb-4">BREACH COMPLETE</h3>
             <p id="game-complete-message" class="text-gray-300">You've done it, Cipher. You exposed Project Chimera and cleared your name. The Nexus is in chaos. You are free.</p>
