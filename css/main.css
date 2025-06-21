@@ -43,6 +43,10 @@ body {
     flex-shrink: 0;
 }
 
+.header-bar #agent-name-display {
+    color: var(--color-primary); /* Ensure agent name is visible */
+}
+
 /* --- Navigation --- */
 .nav-tab {
     padding: 0.75rem 1.5rem;
@@ -251,6 +255,27 @@ body {
 .upgrade-cost { color: var(--color-accent); }
 .upgrade-status-owned { color: var(--color-secondary); }
 
+/* Requirements display on locked nodes */
+.node-requirements {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-danger);
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 3px solid var(--color-danger);
+}
+
+.requirements-title {
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.node-requirements ul {
+    list-style-type: none;
+    padding-left: 0.5rem;
+}
 
 /* --- Data Logs --- */
 .data-log-entry {
@@ -310,6 +335,46 @@ body {
     font-size: 2.5rem; /* Make game over title larger */
     margin-bottom: 1rem;
 }
+
+/* --- Hacking Console Modal --- */
+.hacking-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 15, 20, 0.95); /* Slightly darker, more opaque */
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* Below message modals, above main content */
+    backdrop-filter: blur(8px); /* More blur */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+.hacking-modal.modal-show {
+    display: flex;
+}
+
+.hacking-modal-content {
+    /* This div will contain the actual hacking UI elements */
+    /* It should take up most of the screen, but not be constrained by modal-content's max-width */
+    width: 95%;
+    max-width: 1200px; /* Limit max width for very large screens */
+    height: 95%;
+    max-height: 900px; /* Limit max height */
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-primary);
+    border-radius: 8px;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+    position: relative; /* For absolute positioning of close button */
+}
+
+.hacking-modal-content button {
+    z-index: 1001; /* Ensure buttons are clickable above the overlay */
+    position: relative;
+}
+
 
 /* --- Critical Trace Effect --- */
 .critical-trace-effect {
@@ -380,4 +445,100 @@ body {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-secondary);
+}
+
+/* Screen shake animation for damage/failure feedback */
+.shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+/* --- Settings Menu --- */
+/* Custom Checkbox (used in Tailwind-styled settings) */
+.custom-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    height: 24px;
+    width: 24px;
+    background-color: var(--color-bg-tertiary);
+    border: 1px solid var(--color-primary);
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.custom-checkbox:checked {
+    background-color: var(--color-primary);
+}
+
+.custom-checkbox:checked::before {
+    content: '✔';
+    font-size: 16px;
+    color: var(--color-bg-secondary);
+    font-weight: bold;
+}
+
+/* Custom Slider (used in Tailwind-styled settings) */
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+input[type=range]:focus {
+    outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    height: 8px;
+    background: var(--color-bg-tertiary);
+    border-radius: 4px;
+    border: 1px solid var(--color-primary);
+}
+input[type=range]::-moz-range-track {
+    height: 8px;
+    background: var(--color-bg-tertiary);
+    border-radius: 4px;
+    border: 1px solid var(--color-primary);
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -9px; /* (track-height - thumb-height) / 2 - border-width */
+    background-color: var(--color-primary);
+    height: 24px;
+    width: 12px;
+    border-radius: 3px;
+    border: 1px solid var(--color-primary);
+}
+input[type=range]::-moz-range-thumb {
+    background-color: var(--color-primary);
+    height: 24px;
+    width: 12px;
+    border-radius: 3px;
+    border: 1px solid var(--color-primary);
 }

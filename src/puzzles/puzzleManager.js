@@ -8,13 +8,13 @@ import {
     DEFAULT_PUZZLE_FAIL_TRACE_PENALTY,
     BOSS_PUZZLE_FAIL_TRACE_PENALTY,
     PUZZLE_FEEDBACK_DISPLAY_DELAY
-} from './puzzleConstants.js';
-import { MAX_TRACE_LEVEL } from '../gameConstants.js';
+} from './puzzleConstants.js'; // MAX_TRACE_LEVEL is imported by puzzleConstants.js if needed there.
 
 let puzzleContainer, puzzleFeedback, resetPuzzleBtn;
 let hackingConsole, traceLevelIndicator, hackScoreDisplay, statusIndicator;
 let audioManager;
-let showMessage, addConsoleMessage;
+let showMessage, addConsoleMessage, triggerScreenShake;
+let difficultyManagerInstance; // New: Reference to the difficulty manager
 
 // Callbacks to update main game state
 let updateTraceLevel, updateHackScore, onPuzzleSuccess, onPuzzleFail;
@@ -42,6 +42,8 @@ export const puzzleManager = {
         audioManager = elements.audioManager;
         showMessage = elements.showMessage;
         addConsoleMessage = elements.addConsoleMessage;
+        difficultyManagerInstance = elements.difficultyManager; // Assign the instance
+        triggerScreenShake = elements.triggerScreenShake;
 
         // Callbacks for game state updates
         updateTraceLevel = callbacks.updateTraceLevel;
@@ -77,7 +79,7 @@ export const puzzleManager = {
 
         sequencePuzzle.init(puzzleElements, puzzleCallbacks, puzzleStateGetters);
         pathfindingPuzzle.init(puzzleElements, puzzleCallbacks);
-        timedInputPuzzle.init(puzzleElements, puzzleCallbacks, puzzleStateGetters);
+        timedInputPuzzle.init(puzzleElements, puzzleCallbacks); // timedInputPuzzle does not use stateGetters
 
         resetPuzzleBtn.addEventListener('click', this.retryCurrentPuzzle.bind(this)); // Bind 'this'
     },
@@ -91,18 +93,31 @@ export const puzzleManager = {
         let puzzleType;
         let instruction = '';
 
+        const adjustedParams = difficultyManagerInstance.getAdjustedParameters(node.difficulty);
+
         if (isBoss) {
             const currentStage = node.bossStages[bossStageIndex];
             puzzleType = currentStage.puzzleType;
             instruction = currentStage.instruction;
             addConsoleMessage(hackingConsole, 'SYSTEM', `Nexus Core: Initiating ${currentStage.objectiveName}...`, 'text-[#FFC107]');
             statusIndicator.textContent = `BREACHING NEXUS CORE - STAGE ${bossStageIndex + 1}/${node.bossStages.length}`;
+            // Calculate effective puzzle length for boss stages
+            currentStage.effectivePuzzleLength = Math.max(1, Math.round(currentStage.puzzleLength * adjustedParams.puzzleLengthModifier));
+            if (getGameStates().purchasedUpgrades.sequenceDecryptor && puzzleType === PUZZLE_TYPES.SEQUENCE) {
+                currentStage.effectivePuzzleLength = Math.max(1, currentStage.effectivePuzzleLength - 1);
+            }
         } else {
             puzzleType = node.puzzleTypes[objectiveType];
             if (objectiveType === 'firewall') instruction = "Bypass Firewall: Decrypt shield!";
             if (objectiveType === 'data') instruction = "Data Extraction: Verify checksum!";
             addConsoleMessage(hackingConsole, 'SYSTEM', 'Sub-routine activated! System requires manual input.', 'text-[#FFC107]');
         }
+        // Calculate effective puzzle length for regular nodes
+        node.effectivePuzzleLength = Math.max(1, Math.round(node.puzzleLength * adjustedParams.puzzleLengthModifier));
+        if (getGameStates().purchasedUpgrades.sequenceDecryptor && puzzleType === PUZZLE_TYPES.SEQUENCE) {
+            node.effectivePuzzleLength = Math.max(1, node.effectivePuzzleLength - 1);
+        }
+
 
         puzzleActive = true;
         puzzleFeedback.textContent = ''; // Clear feedback when new puzzle starts
@@ -111,14 +126,14 @@ export const puzzleManager = {
         puzzleContainer.classList.add('flex');
 
         switch (puzzleType) {
-            case PUZZLE_TYPES.SEQUENCE:
-                sequencePuzzle.activate(node, isBoss, bossStageIndex, instruction);
+            case PUZZLE_TYPES.SEQUENCE: // Pass effective puzzle length
+                sequencePuzzle.activate(node, isBoss, bossStageIndex, instruction, isBoss ? node.bossStages[bossStageIndex].effectivePuzzleLength : node.effectivePuzzleLength);
                 break;
             case PUZZLE_TYPES.PATHFINDING:
-                pathfindingPuzzle.activate(node, isBoss, bossStageIndex);
+                pathfindingPuzzle.activate(node, isBoss, bossStageIndex, isBoss ? node.bossStages[bossStageIndex].effectivePuzzleLength : node.effectivePuzzleLength); // Pass effective puzzle length
                 break;
-            case PUZZLE_TYPES.TIMED_INPUT:
-                timedInputPuzzle.activate(node, isBoss, bossStageIndex);
+            case PUZZLE_TYPES.TIMED_INPUT: // Pass effective puzzle length
+                timedInputPuzzle.activate(node, isBoss, bossStageIndex, isBoss ? node.bossStages[bossStageIndex].effectivePuzzleLength : node.effectivePuzzleLength);
                 break;
             default:
                 console.error('Unknown puzzle type:', puzzleType);
@@ -134,6 +149,8 @@ export const puzzleManager = {
             puzzleFeedback.className = 'text-xl font-bold mt-4 text-[#00FF99]';
             addConsoleMessage(hackingConsole, 'HACK', 'Sub-routine successful! Access granted.', 'text-[#00FF99]');
             updateHackScore(PUZZLE_SUCCESS_SCORE);
+
+            difficultyManagerInstance.updatePlayerPerformance('puzzleSuccess'); // Report success
 
             const isLastBossStage = bossFightActive && (currentBossStageIndex + 1 >= currentHackedNode.bossStages.length);
 
@@ -152,6 +169,7 @@ export const puzzleManager = {
 
         } else {
             // On failure, puzzle remains active until user retries or aborts.
+            triggerScreenShake();
             audioManager.play('puzzleFail');
             puzzleFeedback.textContent = 'SUB-ROUTINE FAILED!';
             puzzleFeedback.className = 'text-xl font-bold mt-4 text-[#EF4444]';
@@ -169,6 +187,7 @@ export const puzzleManager = {
             }
 
             updateTraceLevel(Math.min(MAX_TRACE_LEVEL, traceLevel + penaltyTrace));
+            difficultyManagerInstance.updatePlayerPerformance('puzzleFail', { traceGained: penaltyTrace }); // Report failure
             resetPuzzleBtn.classList.remove('hidden');
             onPuzzleFail(); // Notify app.js (e.g., to re-enable hack buttons)
         }
