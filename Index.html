@@ -30,6 +30,21 @@
     <!-- Google Fonts - Inter for main text, Roboto Mono for code/console -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css" />
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% {
+                border-color: #EF4444; /* Tailwind red-500 */
+                box-shadow: 0 0 15px rgba(239, 68, 68, 0.4), 0 0 5px rgba(239, 68, 68, 0.3);
+            }
+            50% {
+                border-color: #F87171; /* Tailwind red-400 */
+                box-shadow: 0 0 30px rgba(248, 113, 113, 0.7), 0 0 10px rgba(248, 113, 113, 0.5);
+            }
+        }
+        .unlocked-pulse {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+    </style>
 
 </head>
 <body>
@@ -94,6 +109,31 @@
                 <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// NETWORK MAP: VISUALIZING THE NEXUS</h2>
                 <div id="network-map-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                     <!-- Network nodes will be dynamically inserted here by JavaScript -->
+
+                    <!-- BOSS NODE: This is a static entry for the final level. -->
+                    <div id="boss-node-chimera" class="network-node-card boss-node p-6 bg-[#1A222F] rounded-lg border-2 border-[#EF4444] shadow-lg shadow-[#EF4444]/20 flex flex-col justify-between transition-all duration-300 hover:border-red-400 hover:shadow-red-400/30 relative overflow-hidden col-span-1 md:col-span-2 lg:col-span-3">
+                        <div class="absolute top-0 right-0 px-3 py-1 bg-red-600 text-white font-bold text-xs tracking-widest rounded-bl-lg">FINAL NODE</div>
+                        <div class="flex items-center mb-4">
+                            <svg class="w-10 h-10 text-red-400 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                            </svg>
+                            <div>
+                                <h3 class="text-2xl font-bold text-red-400">Project Chimera Core</h3>
+                                <p class="text-sm text-gray-400">The heart of the conspiracy. Breach this to win.</p>
+                            </div>
+                        </div>
+                        <div class="text-gray-300 space-y-2 mb-4">
+                            <p><span class="font-semibold text-gray-400">SECURITY:</span> <span class="text-red-500 font-mono">EXTREME</span></p>
+                            <p><span class="font-semibold text-gray-400">TRACE RISK:</span> <span class="text-red-500 font-mono">CRITICAL</span></p>
+                            <p class="text-sm italic text-gray-500">Requires all other network nodes to be compromised.</p>
+                        </div>
+                        <button id="breach-boss-btn" class="btn btn-red w-full btn-disabled" disabled>
+                            <span class="flex items-center justify-center">
+                                <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 9V7a5 5 0 0110 0v2h2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2h2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                                BREACH CHIMERA CORE
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
 

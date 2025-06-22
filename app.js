@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Tools/Upgrades elements
     const networkMapGrid = document.getElementById('network-map-grid');
     const dataLogsList = document.getElementById('data-logs-list');
+    const breachBossBtn = document.getElementById('breach-boss-btn');
+    const bossNodeCard = document.getElementById('boss-node-chimera');
     const upgradesGrid = document.getElementById('upgrades-grid');
 
     // Login Elements
@@ -152,6 +154,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (node.isBoss) {
                          uiManager.addConsoleMessage(document.getElementById('activity-feed'), 'CRITICAL', `All critical intel acquired. The path to the Nexus Core is open. End this.`, 'text-[#EF4444]');
                          uiManager.showMessage('NEXUS CORE UNLOCKED', 'You have pieced together the conspiracy. It\'s time to take down their central server and clear your name.', false);
+                         // Enable the static boss node button and add animation
+                         if (breachBossBtn && bossNodeCard) {
+                            breachBossBtn.disabled = false;
+                            breachBossBtn.classList.remove('btn-disabled');
+                            bossNodeCard.classList.add('unlocked-pulse');
+                         }
                     }
                 }
             }
@@ -354,6 +362,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     abortHackBtn.addEventListener('click', gameLoop.abort);
     closeHackingModalBtn.addEventListener('click', gameLoop.abort); // New: Close button for hacking modal
+
+    // This check is necessary because the boss button is static HTML and might not exist if the HTML is changed.
+    if (breachBossBtn) {
+        breachBossBtn.addEventListener('click', () => {
+            // Find the boss node data from the game constants
+            const bossNode = NETWORK_NODES.find(node => node.isBoss);
+            if (bossNode && !bossNode.isLocked) {
+                gameLoop.start(bossNode);
+            } else {
+                audioManager.play('error');
+                uiManager.showMessage('Access Denied', 'All other network nodes must be compromised before you can attempt this breach.', true);
+            }
+        });
+    }
 
     networkMapGrid.addEventListener('click', handleNetworkNodeClick);
     upgradesGrid.addEventListener('click', handleUpgradePurchase);
