@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,288 +49,244 @@
 <body>
 
 <div id="terminal-container" class="relative">
-        <!-- Top Bar / Header -->
-        <header id="game-header" class="header-bar">
-            <div class="text-2xl font-bold text-[#00F0FF] flex items-center">
-                <span class="glitch-text" data-text="BREACH PROTOCOL // CIPHER">BREACH PROTOCOL // CIPHER</span>
-                <span class="ml-4 text-sm text-gray-500">
+    <!-- Top Bar / Header -->
+    <header id="game-header" class="header-bar">
+        <div class="text-2xl font-bold text-[#00F0FF] flex items-center">
+            <span class="glitch-text" data-text="BREACH PROTOCOL // CIPHER">BREACH PROTOCOL // CIPHER</span>
+            <span class="ml-4 text-sm text-gray-500">
                     <span class="text-[#00FF99]">&#x25CF;</span> <span id="status-indicator">ONLINE</span>
                 </span>
-            </div>
-            <div class="flex items-center space-x-6 text-base font-semibold">
-                <span class="text-gray-400" id="agent-name-display">AGENT: UNKNOWN</span>
-                <span class="text-gray-400">CREDITS: <span id="credits" class="text-[#FFC107]">C 500</span></span>
-                <span class="text-gray-400">TRACE: <span id="trace-level" class="text-[#EF4444]">0%</span></span>
-                <span class="text-gray-400">SCORE: <span id="hack-score" class="text-[#00FF99]">0</span></span>
-            </div>
-        </header>
+        </div>
+        <div class="flex items-center space-x-6 text-base font-semibold">
+            <span class="text-gray-400" id="agent-name-display">AGENT: UNKNOWN</span>
+            <span class="text-gray-400">CREDITS: <span id="credits" class="text-[#FFC107]">C 500</span></span>
+            <span class="text-gray-400">TRACE: <span id="trace-level" class="text-[#EF4444]">0%</span></span>
+            <span class="text-gray-400">SCORE: <span id="hack-score" class="text-[#00FF99]">0</span></span>
+        </div>
+    </header>
 
-        <!-- Main Content Area -->
-        <main class="flex-grow p-6 overflow-hidden flex flex-col">
-            <!-- Navigation Tabs -->            
-            <nav class="flex justify-start mb-6" id="main-nav-tabs" role="tablist" aria-label="Main Navigation">
-                <button type="button" id="nav-sanctuary" class="nav-tab active" data-view="sanctuary" role="tab" aria-controls="view-sanctuary" aria-selected="true">SANCTUARY</button>
-                <button type="button" id="nav-network" class="nav-tab" data-view="network-map" role="tab" aria-controls="view-network-map" aria-selected="false">NETWORK MAP</button>
-                <button type="button" id="nav-tools" class="nav-tab" data-view="tools" role="tab" aria-controls="view-tools" aria-selected="false">TOOLS & EXPLOITS</button>
-                <button type="button" id="nav-logs" class="nav-tab" data-view="data-logs" role="tab" aria-controls="view-data-logs" aria-selected="false">DATA LOGS</button>
-                <button type="button" id="nav-settings" class="nav-tab" data-view="settings" role="tab" aria-controls="view-settings" aria-selected="false">SETTINGS</button>
-            </nav>
+    <!-- Main Content Area -->
+    <main class="flex-grow p-6 overflow-hidden flex flex-col">
+        <!-- Navigation Tabs -->
+        <nav class="flex justify-start mb-6" id="main-nav-tabs" role="tablist" aria-label="Main Navigation">
+            <button type="button" id="nav-sanctuary" class="nav-tab active" data-view="sanctuary" role="tab" aria-controls="view-sanctuary" aria-selected="true">SANCTUARY</button>
+            <button type="button" id="nav-network" class="nav-tab" data-view="network-map" role="tab" aria-controls="view-network-map" aria-selected="false">NETWORK MAP</button>
+            <button type="button" id="nav-tools" class="nav-tab" data-view="tools" role="tab" aria-controls="view-tools" aria-selected="false">TOOLS & EXPLOITS</button>
+            <button type="button" id="nav-logs" class="nav-tab" data-view="data-logs" role="tab" aria-controls="view-data-logs" aria-selected="false">DATA LOGS</button>
+            <button type="button" id="nav-settings" class="nav-tab" data-view="settings" role="tab" aria-controls="view-settings" aria-selected="false">SETTINGS</button>
+        </nav>
 
-            <!-- View Containers -->
-            <div id="view-sanctuary" class="view-content flex flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl" role="tabpanel" aria-labelledby="nav-sanctuary">
-                <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// YOUR SANCTUARY</h2>
-                <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar">
-                    <p class="text-gray-300 leading-relaxed mb-6">
-                        They framed you, Cipher. Wiped your identity, branded you a criminal. From this secure terminal, you can fight back. Breach their network, uncover the truth piece by piece, and expose the conspiracy they call "Project Chimera". Your first step is to find a weak point in their outer defenses.
-                    </p>
-                    <div class="flex flex-wrap gap-4">
-                        <button id="start-hack-button" class="btn">
+        <!-- View Containers -->
+        <div id="view-sanctuary" class="view-content flex flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl" role="tabpanel" aria-labelledby="nav-sanctuary">
+            <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// YOUR SANCTUARY</h2>
+            <div class="flex-grow overflow-y-auto pr-4 custom-scrollbar">
+                <p class="text-gray-300 leading-relaxed mb-6">
+                    They framed you, Cipher. Wiped your identity, branded you a criminal. From this secure terminal, you can fight back. Breach their network, uncover the truth piece by piece, and expose the conspiracy they call "Project Chimera". Your first step is to find a weak point in their outer defenses.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <button id="start-hack-button" class="btn">
                             <span class="flex items-center">
                                 <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-8V7a1 1 0 112 0v3h2a1 1 0 110 2h-2v2a1 1 0 11-2 0v-2H7a1 1 0 110-2h2z" clip-rule="evenodd"></path></svg>
                                 INITIATE BREACH
                             </span>
-                        </button>
-                    </div>
+                    </button>
+                </div>
 
 
-                    <h3 class="text-2xl font-bold text-[#00FF99] mt-8 mb-4">// RECENT ACTIVITY LOGS</h3>
-                    <div id="activity-feed" class="console-text h-64">
-                        <span class="text-[#00FF99]">[LOG] OS booting to Breach Protocol Kernel v3.1...</span><br>
-                        <span class="text-[#00FF99]">[LOG] Establishing secure darknet routing...</span><br>
-                        <span class="text-[#FFC107]">[ALERT] Incoming encrypted message from "UNKNOWN"...</span><br>
-                        <span class="text-[#E0E7FF]">[UNKNOWN]: "They know you're coming, Cipher. Stay sharp."</span><br>
-                    </div>
+                <h3 class="text-2xl font-bold text-[#00FF99] mt-8 mb-4">// RECENT ACTIVITY LOGS</h3>
+                <div id="activity-feed" class="console-text h-64">
+                    <span class="text-[#00FF99]">[LOG] OS booting to Breach Protocol Kernel v3.1...</span><br>
+                    <span class="text-[#00FF99]">[LOG] Establishing secure darknet routing...</span><br>
+                    <span class="text-[#FFC107]">[ALERT] Incoming encrypted message from "UNKNOWN"...</span><br>
+                    <span class="text-[#E0E7FF]">[UNKNOWN]: "They know you're coming, Cipher. Stay sharp."</span><br>
                 </div>
             </div>
+        </div>
 
-            <!-- Other Views (Placeholders) -->
-            <div id="view-network-map" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-network">
-                <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// NETWORK MAP: VISUALIZING THE NEXUS</h2>
-                <div id="network-map-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-                    <!-- Network nodes will be dynamically inserted here by JavaScript -->
+        <!-- Network Map View -->
+        <div id="view-network-map" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-network">
+            <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// NETWORK MAP: VISUALIZING THE NEXUS</h2>
+            <div id="network-map-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                <!-- Network nodes will be dynamically inserted here by JavaScript -->
 
-                    <!-- BOSS NODE: This is a static entry for the final level. -->
-                    <div id="boss-node-chimera" class="network-node-card boss-node p-6 bg-[#1A222F] rounded-lg border-2 border-[#EF4444] shadow-lg shadow-[#EF4444]/20 flex flex-col justify-between transition-all duration-300 hover:border-red-400 hover:shadow-red-400/30 relative overflow-hidden col-span-1 md:col-span-2 lg:col-span-3">
-                        <div class="absolute top-0 right-0 px-3 py-1 bg-red-600 text-white font-bold text-xs tracking-widest rounded-bl-lg">FINAL NODE</div>
-                        <div class="flex items-center mb-4">
-                            <svg class="w-10 h-10 text-red-400 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                            </svg>
-                            <div>
-                                <h3 class="text-2xl font-bold text-red-400">Project Chimera Core</h3>
-                                <p class="text-sm text-gray-400">The heart of the conspiracy. Breach this to win.</p>
-                            </div>
+                <!-- BOSS NODE: This is a static entry for the final level. -->
+                <div id="boss-node-chimera" class="network-node-card boss-node p-6 bg-[#1A222F] rounded-lg border-2 border-[#EF4444] shadow-lg shadow-[#EF4444]/20 flex flex-col justify-between transition-all duration-300 hover:border-red-400 hover:shadow-red-400/30 relative overflow-hidden col-span-1 md:col-span-2 lg:col-span-3">
+                    <div class="absolute top-0 right-0 px-3 py-1 bg-red-600 text-white font-bold text-xs tracking-widest rounded-bl-lg">FINAL NODE</div>
+                    <div class="flex items-center mb-4">
+                        <svg class="w-10 h-10 text-red-400 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                        <div>
+                            <h3 class="text-2xl font-bold text-red-400">Project Chimera Core</h3>
+                            <p class="text-sm text-gray-400">The heart of the conspiracy. Breach this to win.</p>
                         </div>
-                        <div class="text-gray-300 space-y-2 mb-4">
-                            <p><span class="font-semibold text-gray-400">SECURITY:</span> <span class="text-red-500 font-mono">EXTREME</span></p>
-                            <p><span class="font-semibold text-gray-400">TRACE RISK:</span> <span class="text-red-500 font-mono">CRITICAL</span></p>
-                            <p class="text-sm italic text-gray-500">Requires all other network nodes to be compromised.</p>
-                        </div>
-                        <button id="breach-boss-btn" class="btn btn-red w-full btn-disabled" disabled>
+                    </div>
+                    <div class="text-gray-300 space-y-2 mb-4">
+                        <p><span class="font-semibold text-gray-400">SECURITY:</span> <span class="text-red-500 font-mono">EXTREME</span></p>
+                        <p><span class="font-semibold text-gray-400">TRACE RISK:</span> <span class="text-red-500 font-mono">CRITICAL</span></p>
+                        <p class="text-sm italic text-gray-500">Requires all other network nodes to be compromised.</p>
+                    </div>
+                    <button id="breach-boss-btn" class="btn btn-red w-full btn-disabled" disabled>
                             <span class="flex items-center justify-center">
                                 <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 9V7a5 5 0 0110 0v2h2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2h2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
                                 BREACH CHIMERA CORE
                             </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="view-tools" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-tools">
-                <h2 class="text-3xl font-bold text-[#FFC107] mb-6">// TOOLS & EXPLOITS: YOUR ARSENAL</h2>
-                <div id="upgrades-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-                    <!-- Upgrade Card 1 -->
-                    <div class="upgrade-card" data-upgrade="iceBreaker">
-                        <h3 class="upgrade-title">ICE Breaker Suite</h3>
-                        <p class="upgrade-description">Advanced algorithms to slow down Intrusion Countermeasure Electronics. Reduces trace level increase rate by 30%.</p>
-                        <div class="upgrade-footer">
-                            <span class="upgrade-cost">COST: C 400</span>
-                            <button class="btn btn-green upgrade-purchase-btn">PURCHASE</button>
-                        </div>
-                    </div>
-                    <!-- Upgrade Card 2 -->
-                    <div class="upgrade-card" data-upgrade="sequenceDecryptor">
-                        <h3 class="upgrade-title">Sequence Decryptor</h3>
-                        <p class="upgrade-description">Pre-calculates common encryption patterns. Reduces required puzzle sequence length by 1.</p>
-                        <div class="upgrade-footer">
-                            <span class="upgrade-cost">COST: C 600</span>
-                            <button class="btn btn-green upgrade-purchase-btn">PURCHASE</button>
-                        </div>
-                    </div>
-                    <!-- Upgrade Card 3 -->
-                    <div class="upgrade-card" data-upgrade="creditScrubber">
-                        <h3 class="upgrade-title">Credit Scrubber</h3>
-                        <p class="upgrade-description">A sophisticated laundering tool that finds hidden credit caches. Increases base credit rewards from hacks by 50%.</p>
-                        <div class="upgrade-footer">
-                            <span class="upgrade-cost">COST: C 350</span>
-                            <button class="btn btn-green upgrade-purchase-btn">PURCHASE</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="view-data-logs" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-logs">
-                <h2 class="text-3xl font-bold text-[#FF00FF] mb-6">// DATA LOGS: COMPROMISED INTEL</h2>
-                <div id="data-logs-list" class="space-y-6 w-full max-w-4xl mx-auto">
-                    <!-- Discovered data logs will be dynamically inserted here -->
-                </div>
-            </div>
-
-            <div id="view-settings" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-settings">
-                <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// SYSTEM SETTINGS</h2>
-                <div class="settings-container w-full max-w-2xl mx-auto space-y-8">
-                    <div class="setting-item">
-                        <label for="volume-slider" class="text-lg text-gray-300">AUDIO VOLUME</label>
-                        <div class="flex items-center gap-4 mt-2">
-                            <input type="range" id="volume-slider" min="0" max="1" step="0.05" class="w-full">
-                            <span id="volume-value" class="text-[#00FF99] w-12 text-center font-mono">50%</span>
-                        </div>
-                    </div>
-                    <div class="setting-item">
-                        <label class="flex items-center gap-3 text-lg text-gray-300 cursor-pointer">
-                            <input type="checkbox" id="mute-checkbox" class="custom-checkbox">
-                            MUTE ALL AUDIO
-                        </label>
-                    </div>
-                    <div class="settings-actions flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-700">
-                        <button id="save-game-btn" class="btn btn-green flex-grow">SAVE PROGRESS</button>
-                        <button id="load-game-btn" class="btn flex-grow">LOAD PROGRESS</button>
-                        <button id="delete-save-btn" class="btn btn-red flex-grow">DELETE SAVE</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Login View -->
-            <div id="view-login" class="view-content flex flex-col h-full items-center justify-center bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl">
-                <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// IDENTIFY YOURSELF, AGENT</h2>
-                <p class="text-gray-300 mb-8 text-center max-w-md">
-                    Enter your agent codename to begin your mission. Your identity will be used to track your progress.
-                </p>
-                <p id="login-error-message" class="text-[#EF4444] text-center mb-4 hidden">
-                    <!-- Error messages will be displayed here -->
-                </p>
-                <div class="flex flex-col gap-4 w-full max-w-xs">
-                    <label for="agent-name-input" class="sr-only">Agent Codename</label>
-                    <input type="text" id="agent-name-input" placeholder="AGENT CODENAME" class="w-full bg-[#0D1117] border border-[#00F0FF] text-[#00FF99] text-center text-2xl p-3 rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-[#00F0FF]" maxlength="20">
-                    <button id="login-btn" class="btn btn-green">
-                        <span class="flex items-center justify-center">INITIATE PROTOCOL</span>
                     </button>
                 </div>
-                <button id="new-game-btn-login" class="btn btn-red mt-4">
-                    START NEW GAME (RESET ALL PROGRESS)
-                </button>
             </div>
+        </div>
 
-        </main>
-    </div>
-
-    <!-- Hacking Console Modal -->
-    <div id="view-hacking" class="hacking-modal" role="dialog" aria-modal="true" aria-labelledby="hacking-view-title">
-        <div class="hacking-modal-content flex flex-col h-full p-6 relative">
-            <button id="close-hacking-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
-            <h2 id="hacking-view-title" class="text-3xl font-bold text-[#EF4444] mb-6" data-text="// ACTIVE BREACH: STANDING BY">// ACTIVE BREACH: STANDING BY</h2>
-            <div class="progress-bar-container w-full h-3 mb-4">
-                <div id="hack-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+        <!-- Tools & Upgrades View -->
+        <div id="view-tools" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-tools">
+            <h2 class="text-3xl font-bold text-[#FFC107] mb-6">// TOOLS & EXPLOITS: YOUR ARSENAL</h2>
+            <div id="upgrades-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                <!-- Upgrade cards will be dynamically inserted here by JavaScript -->
             </div>
+        </div>
 
-            <!-- Hacking Console Area -->
-            <div id="hacking-console" class="console-text flex-grow mb-6 h-1/2">
-                <span class="text-[#00FF99]">&gt;&gt; Connecting to target: 192.168.1.137...</span><br>
-                <span class="text-[#FFC107]">&gt;&gt; Running preliminary scans. Beware Cerberus AI countermeasures.</span><br>
+        <!-- Data Logs View -->
+        <div id="view-data-logs" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-logs">
+            <h2 class="text-3xl font-bold text-[#FF00FF] mb-6">// DATA LOGS: COMPROMISED INTEL</h2>
+            <div id="data-logs-list" class="space-y-6 w-full max-w-4xl mx-auto">
+                <!-- Discovered data logs will be dynamically inserted here -->
             </div>
+        </div>
 
-            <!-- Puzzle Area (Dynamic) -->
-            <div id="puzzle-container" class="bg-[#1A222F] p-5 rounded-lg border border-[#00F0FF] hidden flex-col items-center justify-center flex-shrink-0">
-                <!-- Sequence Puzzle -->
-                <div id="sequence-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
-                    <p class="text-gray-300 text-lg mb-4" id="sequence-instructions">Enter the highlighted sequence:</p>
-                    <div id="code-sequence-display" class="flex flex-wrap justify-center gap-3 mb-4">
-                        <!-- Code nodes will be dynamically inserted here -->
+        <!-- Settings View -->
+        <div id="view-settings" class="view-content hidden flex-col h-full bg-[#0D1117] p-6 rounded-lg border border-[#2A3F57] shadow-inner-xl overflow-y-auto custom-scrollbar" role="tabpanel" aria-labelledby="nav-settings">
+            <h2 class="text-3xl font-bold text-[#00F0FF] mb-6">// SYSTEM SETTINGS</h2>
+            <div class="settings-container w-full max-w-2xl mx-auto space-y-8">
+                <div class="setting-item">
+                    <label for="volume-slider" class="text-lg text-gray-300">AUDIO VOLUME</label>
+                    <div class="flex items-center gap-4 mt-2">
+                        <input type="range" id="volume-slider" min="0" max="1" step="0.05" class="w-full">
+                        <span id="volume-value" class="text-[#00FF99] w-12 text-center font-mono">50%</span>
                     </div>
                 </div>
-
-                <!-- Pathfinding Puzzle -->
-                <div id="pathfinding-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
-                    <p class="text-gray-300 text-lg mb-4" id="pathfinding-instructions">Create a direct path from START to END.</p>
-                    <div id="pathfinding-grid" class="mb-4">
-                        <!-- Pathfinding grid will be dynamically inserted here -->
-                    </div>
+                <div class="setting-item">
+                    <label class="flex items-center gap-3 text-lg text-gray-300 cursor-pointer">
+                        <input type="checkbox" id="mute-checkbox" class="custom-checkbox">
+                        MUTE ALL AUDIO
+                    </label>
                 </div>
-
-                <!-- Timed Input Puzzle -->
-                <div id="timed-input-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
-                    <label for="timed-input-field" class="text-gray-300 text-lg mb-4" id="timed-input-instructions">Type the sequence before the timer expires!</label>
-                    <div id="timed-input-sequence" class="text-3xl font-bold font-mono text-[#00F0FF] tracking-widest mb-4"></div>
-                    <div id="timed-input-timer-container" class="w-full h-2 bg-[#0D1117] rounded-full mb-4 border border-[#EF4444]">
-                        <div id="timed-input-timer" class="h-full bg-gradient-to-r from-red-500 to-yellow-500 rounded-full" style="width: 100%;"></div>
-                    </div>
-                    <input type="text" id="timed-input-field" class="w-full bg-[#0D1117] border border-[#00F0FF] text-[#00FF99] text-center text-2xl p-2 rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-[#00F0FF]">
+                <div class="settings-actions flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-700">
+                    <button id="save-game-btn" class="btn btn-green flex-grow">SAVE PROGRESS</button>
+                    <button id="load-game-btn" class="btn flex-grow">LOAD PROGRESS</button>
+                    <button id="delete-save-btn" class="btn btn-red flex-grow">DELETE SAVE</button>
                 </div>
+            </div>
+        </div>
 
-                <!-- Common Feedback and Reset Button -->
-                <div id="puzzle-feedback" class="text-xl font-bold mt-4"></div>
-                <button id="reset-puzzle-btn" class="btn btn-red hidden">RETRY SEQUENCE</button>
+    </main>
+</div>
+
+<!-- Hacking Console Modal -->
+<div id="view-hacking" class="hacking-modal" role="dialog" aria-modal="true" aria-labelledby="hacking-view-title">
+    <div class="hacking-modal-content flex flex-col h-full p-6 relative">
+        <button id="close-hacking-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+        <h2 id="hacking-view-title" class="text-3xl font-bold text-[#EF4444] mb-6" data-text="// ACTIVE BREACH: STANDING BY">// ACTIVE BREACH: STANDING BY</h2>
+        <div class="progress-bar-container w-full h-3 mb-4">
+            <div id="hack-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+        </div>
+
+        <!-- Hacking Console Area -->
+        <div id="hacking-console" class="console-text flex-grow mb-6 h-1/2">
+            <span class="text-[#00FF99]">&gt;&gt; Connecting to target: 192.168.1.137...</span><br>
+            <span class="text-[#FFC107]">&gt;&gt; Running preliminary scans. Beware Cerberus AI countermeasures.</span><br>
+        </div>
+
+        <!-- Puzzle Area (Dynamic) -->
+        <div id="puzzle-container" class="bg-[#1A222F] p-5 rounded-lg border border-[#00F0FF] hidden flex-col items-center justify-center flex-shrink-0">
+            <!-- Sequence Puzzle -->
+            <div id="sequence-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
+                <p class="text-gray-300 text-lg mb-4" id="sequence-instructions">Enter the highlighted sequence:</p>
+                <div id="code-sequence-display" class="flex flex-wrap justify-center gap-3 mb-4">
+                    <!-- Code nodes will be dynamically inserted here -->
+                </div>
             </div>
 
+            <!-- Pathfinding Puzzle -->
+            <div id="pathfinding-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
+                <p class="text-gray-300 text-lg mb-4" id="pathfinding-instructions">Create a direct path from START to END.</p>
+                <div id="pathfinding-grid" class="mb-4">
+                    <!-- Pathfinding grid will be dynamically inserted here -->
+                </div>
+            </div>
 
-            <div class="mt-6 flex flex-col sm:flex-row gap-4">
-                <button id="bypass-firewall-btn" class="btn flex-grow">
+            <!-- Timed Input Puzzle -->
+            <div id="timed-input-puzzle-area" class="puzzle-content hidden w-full flex-col items-center">
+                <label for="timed-input-field" class="text-gray-300 text-lg mb-4" id="timed-input-instructions">Type the sequence before the timer expires!</label>
+                <div id="timed-input-sequence" class="text-3xl font-bold font-mono text-[#00F0FF] tracking-widest mb-4"></div>
+                <div id="timed-input-timer-container" class="w-full h-2 bg-[#0D1117] rounded-full mb-4 border border-[#EF4444]">
+                    <div id="timed-input-timer" class="h-full bg-gradient-to-r from-red-500 to-yellow-500 rounded-full" style="width: 100%;"></div>
+                </div>
+                <input type="text" id="timed-input-field" class="w-full bg-[#0D1117] border border-[#00F0FF] text-[#00FF99] text-center text-2xl p-2 rounded-lg font-mono focus:outline-none focus:ring-2 focus:ring-[#00F0FF]">
+            </div>
+
+            <!-- Common Feedback and Reset Button -->
+            <div id="puzzle-feedback" class="text-xl font-bold mt-4"></div>
+            <button id="reset-puzzle-btn" class="btn btn-red hidden">RETRY SEQUENCE</button>
+        </div>
+
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-4">
+            <button id="bypass-firewall-btn" class="btn flex-grow">
                     <span class="flex items-center justify-center">
                         <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5 9V7a5 5 0 0110 0v2h2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2h2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
                         BYPASS FIREWALL
                     </span>
-                </button>
-                <button id="extract-data-btn" class="btn btn-green flex-grow btn-disabled" disabled>
+            </button>
+            <button id="extract-data-btn" class="btn btn-green flex-grow btn-disabled" disabled>
                     <span class="flex items-center justify-center">
                         <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2h3V1a1 1 0 011-1h2a1 1 0 011 1v2h3a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 2a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
                         EXTRACT DATA
                     </span>
-                </button>
-                <button id="abort-hack-btn" class="btn btn-red flex-grow">
+            </button>
+            <button id="abort-hack-btn" class="btn btn-red flex-grow">
                     <span class="flex items-center justify-center">
                         <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
                         ABORT BREACH
                     </span>
-                </button>
-            </div>
+            </button>
         </div>
     </div>
+</div>
 
-    <!-- Global Message Modal -->
-    <div id="message-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-message">
-        <div class="modal-content">
-            <h3 id="modal-title" class="text-2xl font-bold text-[#00F0FF] mb-4"></h3>
-            <p id="modal-message" class="text-gray-300"></p>
-            <div id="modal-buttons" class="mt-6 flex gap-4 justify-center">
-                <button id="modal-close-btn" class="btn">OK</button>
-            </div>
+<!-- Global Message Modal -->
+<div id="message-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-message">
+    <div class="modal-content">
+        <h3 id="modal-title" class="text-2xl font-bold text-[#00F0FF] mb-4"></h3>
+        <p id="modal-message" class="text-gray-300"></p>
+        <div id="modal-buttons" class="mt-6 flex gap-4 justify-center">
+            <button id="modal-close-btn" class="btn">OK</button>
         </div>
     </div>
+</div>
 
-    <!-- Game Over Modal -->
-    <div id="game-over-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="game-over-title" aria-describedby="game-over-message">
-        <div class="modal-content game-over-modal-content">
-            <h3 id="game-over-title" class="text-2xl font-bold text-[#EF4444] mb-4 glitch-text" data-text="TRACE COMPLETE">TRACE COMPLETE</h3>
-            <p id="game-over-message" class="text-gray-300">Your location has been compromised. The Nexus AI has locked you out. All local data has been wiped.</p>
-            <div class="mt-6 flex gap-4 justify-center">
-                <button id="restart-game-btn" class="btn btn-red">RESTART GAME</button>
-                <button id="load-from-game-over-btn" class="btn">LOAD LAST SAVE</button>
-            </div>
+<!-- Game Over Modal -->
+<div id="game-over-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="game-over-title" aria-describedby="game-over-message">
+    <div class="modal-content game-over-modal-content">
+        <h3 id="game-over-title" class="text-2xl font-bold text-[#EF4444] mb-4 glitch-text" data-text="TRACE COMPLETE">TRACE COMPLETE</h3>
+        <p id="game-over-message" class="text-gray-300">Your location has been compromised. The Nexus AI has locked you out. All local data has been wiped.</p>
+        <div class="mt-6 flex gap-4 justify-center">
+            <button id="restart-game-btn" class="btn btn-red">RESTART GAME</button>
+            <button id="load-from-game-over-btn" class="btn">LOAD LAST SAVE</button>
         </div>
     </div>
+</div>
 
-    <!-- Game Complete Modal -->
-    <div id="game-complete-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="game-complete-title" aria-describedby="game-complete-message">
-        <div class="modal-content game-complete-modal-content">
-            <h3 id="game-complete-title" class="text-2xl font-bold text-[#00FF99] mb-4">BREACH COMPLETE</h3>
-            <p id="game-complete-message" class="text-gray-300">You've done it, Cipher. You exposed Project Chimera and cleared your name. The Nexus is in chaos. You are free.</p>
-            <div class="mt-6 flex gap-4 justify-center">
-                <button id="new-game-btn" class="btn btn-green">START NEW GAME</button>
-            </div>
+<!-- Game Complete Modal -->
+<div id="game-complete-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="game-complete-title" aria-describedby="game-complete-message">
+    <div class="modal-content game-complete-modal-content">
+        <h3 id="game-complete-title" class="text-2xl font-bold text-[#00FF99] mb-4">BREACH COMPLETE</h3>
+        <p id="game-complete-message" class="text-gray-300">You've done it, Cipher. You exposed Project Chimera and cleared your name. The Nexus is in chaos. You are free.</p>
+        <div class="mt-6 flex gap-4 justify-center">
+            <button id="new-game-btn" class="btn btn-green">START NEW GAME</button>
         </div>
     </div>
+</div>
 
-    <script type="module" src="app.js"></script>
+<script type="module" src="app.js"></script>
 
 </body>
 </html>

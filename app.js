@@ -4,17 +4,28 @@ import { gameState, initGameState, saveGame, loadGame, resetGame } from './src/g
 import { audioManager } from './src/audioManager.js';
 import { uiManager } from './src/uiManager.js';
 import { gameLoop } from './src/gameLoop.js';
-import { difficultyManager } from './src/difficultyManager.js'; // New import
+import { difficultyManager } from './src/difficultyManager.js';
 import { UPGRADES, NETWORK_NODES, INTEL_LOGS } from './src/gameData.js';
 
+const SAVE_KEY = 'breachProtocolSaveData';
+
 document.addEventListener('DOMContentLoaded', () => {
-    // UI Elements
+    // --- Authentication Guard ---
+    // If no save data exists, the user should not be on this page.
+    // Redirect them to the login page to create a profile.
+    if (!localStorage.getItem(SAVE_KEY)) {
+        window.location.href = 'login.html';
+        return; // Stop executing any further code on this page
+    }
+
+    // --- UI Elements (Login elements are now removed) ---
     const navTabs = document.querySelectorAll('.nav-tab');
-    const mainNavTabs = document.getElementById('main-nav-tabs'); // Reference to the nav container
-    const gameHeader = document.getElementById('game-header'); // Reference to the game header
+    const mainNavTabs = document.getElementById('main-nav-tabs');
+    const gameHeader = document.getElementById('game-header');
     const viewContents = document.querySelectorAll('.view-content');
+
     const startHackButton = document.getElementById('start-hack-button');
-    const terminalContainer = document.getElementById('terminal-container'); // Added reference to main terminal container
+    const terminalContainer = document.getElementById('terminal-container');
     const hackProgressBar = document.getElementById('hack-progress-bar');
     const hackingConsole = document.getElementById('hacking-console');
     const hackingViewTitle = document.getElementById('hacking-view-title');
@@ -25,18 +36,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const hackScoreDisplay = document.getElementById('hack-score');
 
     // Puzzle elements
-    const puzzleContainer = document.getElementById('puzzle-container'); // Main puzzle area
-    const puzzleFeedback = document.getElementById('puzzle-feedback'); // Feedback for puzzles
-    const resetPuzzleBtn = document.getElementById('reset-puzzle-btn'); // Retry button for puzzles
-    const sequencePuzzleArea = document.getElementById('sequence-puzzle-area'); // Sequence puzzle container
-    const sequenceInstructions = document.getElementById('sequence-instructions'); // Sequence puzzle instructions
-    const codeSequenceDisplay = document.getElementById('code-sequence-display'); // Sequence puzzle display
-    const pathfindingPuzzleArea = document.getElementById('pathfinding-puzzle-area'); // Pathfinding puzzle container
-    const pathfindingGrid = document.getElementById('pathfinding-grid'); // Pathfinding grid
-    const timedInputPuzzleArea = document.getElementById('timed-input-puzzle-area'); // Timed input puzzle container
-    const timedInputSequence = document.getElementById('timed-input-sequence'); // Timed input sequence display
-    const timedInputTimer = document.getElementById('timed-input-timer'); // Timed input timer bar
-    const timedInputField = document.getElementById('timed-input-field'); // Timed input field
+    const puzzleContainer = document.getElementById('puzzle-container');
+    const puzzleFeedback = document.getElementById('puzzle-feedback');
+    const resetPuzzleBtn = document.getElementById('reset-puzzle-btn');
+    const sequencePuzzleArea = document.getElementById('sequence-puzzle-area');
+    const sequenceInstructions = document.getElementById('sequence-instructions');
+    const codeSequenceDisplay = document.getElementById('code-sequence-display');
+    const pathfindingPuzzleArea = document.getElementById('pathfinding-puzzle-area');
+    const pathfindingGrid = document.getElementById('pathfinding-grid');
+    const timedInputPuzzleArea = document.getElementById('timed-input-puzzle-area');
+    const timedInputSequence = document.getElementById('timed-input-sequence');
+    const timedInputTimer = document.getElementById('timed-input-timer');
+    const timedInputField = document.getElementById('timed-input-field');
     const bypassFirewallBtn = document.getElementById('bypass-firewall-btn');
     const extractDataBtn = document.getElementById('extract-data-btn');
 
@@ -50,34 +61,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadFromGameOverBtn = document.getElementById('load-from-game-over-btn');
     const gameCompleteModal = document.getElementById('game-complete-modal');
     const newGameBtn = document.getElementById('new-game-btn');
-
-    // Hacking Modal specific elements
-    const hackingViewModal = document.getElementById('view-hacking'); // The hacking console itself is now a modal
+    const hackingViewModal = document.getElementById('view-hacking');
     const closeHackingModalBtn = document.getElementById('close-hacking-modal-btn');
 
-
-    // Tools/Upgrades elements
+    // View-specific content containers
     const networkMapGrid = document.getElementById('network-map-grid');
     const dataLogsList = document.getElementById('data-logs-list');
     const breachBossBtn = document.getElementById('breach-boss-btn');
     const bossNodeCard = document.getElementById('boss-node-chimera');
     const upgradesGrid = document.getElementById('upgrades-grid');
 
-    // Login Elements
-    const agentNameInput = document.getElementById('agent-name-input');
-    const loginBtn = document.getElementById('login-btn');
-    const loginErrorMessage = document.getElementById('login-error-message');
     // Settings Elements
     const volumeSlider = document.getElementById('volume-slider');
     const volumeValue = document.getElementById('volume-value');
     const muteCheckbox = document.getElementById('mute-checkbox');
-
-    // Save/Load Buttons
-    const newGameBtnLogin = document.getElementById('new-game-btn-login');
     const saveGameBtn = document.getElementById('save-game-btn');
     const agentNameDisplay = document.getElementById('agent-name-display');
     const loadGameBtn = document.getElementById('load-game-btn');
-    const deleteSaveBtn = document.getElementById('delete-save-btn'); // Corrected ID
+    const deleteSaveBtn = document.getElementById('delete-save-btn');
 
     // --- Game State Flow (Game Over / Win) ---
     function handleGameOver() {
@@ -103,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedNode = NETWORK_NODES.find(node => node.id === nodeId);
 
         if (selectedNode) {
-            // uiManager.showView('hacking'); // Removed: gameLoop.start will now show the modal
             gameLoop.start(selectedNode);
         }
     }
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         NETWORK_NODES.forEach(node => {
             if (node.isLocked && node.requirements && node.requirements.nodes) {
                 const requiredNodes = node.requirements.nodes;
-                
+
                 const allRequirementsMet = requiredNodes.every(reqNodeId => {
                     const requiredNode = NETWORK_NODES.find(n => n.id === reqNodeId);
                     return requiredNode && requiredNode.isCompleted;
@@ -152,14 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     aNodeWasUnlocked = true;
                     uiManager.addConsoleMessage(document.getElementById('activity-feed'), 'SYSTEM', `New network node available: ${node.name}`, 'text-[#00F0FF]');
                     if (node.isBoss) {
-                         uiManager.addConsoleMessage(document.getElementById('activity-feed'), 'CRITICAL', `All critical intel acquired. The path to the Nexus Core is open. End this.`, 'text-[#EF4444]');
-                         uiManager.showMessage('NEXUS CORE UNLOCKED', 'You have pieced together the conspiracy. It\'s time to take down their central server and clear your name.', false);
-                         // Enable the static boss node button and add animation
-                         if (breachBossBtn && bossNodeCard) {
+                        uiManager.addConsoleMessage(document.getElementById('activity-feed'), 'CRITICAL', `All critical intel acquired. The path to the Nexus Core is open. End this.`, 'text-[#EF4444]');
+                        uiManager.showMessage('NEXUS CORE UNLOCKED', 'You have pieced together the conspiracy. It\'s time to take down their central server and clear your name.', false);
+                        if (breachBossBtn && bossNodeCard) {
                             breachBossBtn.disabled = false;
                             breachBossBtn.classList.remove('btn-disabled');
                             bossNodeCard.classList.add('unlocked-pulse');
-                         }
+                        }
                     }
                 }
             }
@@ -201,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 uiManager.addConsoleMessage(hackingConsole, 'SYSTEM', 'Critical data acquired. Prepare for virus deployment.', 'text-[#00F0FF]');
             }
         }
-
         uiManager.updateHackActionButtons();
     }
 
@@ -209,13 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
         uiManager.updateHackActionButtons();
     }
 
-    // Initialize view to Sanctuary on load
+    // Initialize the entire game application
     function initializeGame() {
         audioManager.init();
 
         if (volumeSlider) {
             volumeSlider.value = audioManager.volume;
-            volumeValue.textContent = `${Math.round(volumeSlider.value * 100)}%`; // Use volumeSlider.value
+            volumeValue.textContent = `${Math.round(volumeSlider.value * 100)}%`;
         }
         if (muteCheckbox) {
             muteCheckbox.checked = audioManager.isMuted;
@@ -229,8 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
             timedInputTimer, timedInputField, bypassFirewallBtn, extractDataBtn,
             messageModal, modalTitle, modalMessage, modalCloseBtn, gameOverModal, saveGameBtn, loadGameBtn, deleteSaveBtn,
             restartGameBtn, loadFromGameOverBtn, gameCompleteModal, newGameBtn,
-            networkMapGrid, dataLogsList, upgradesGrid, agentNameDisplay, agentNameInput, loginErrorMessage,
-            hackingViewModal // Pass the hacking modal element
+            networkMapGrid, dataLogsList, upgradesGrid, agentNameDisplay,
+            hackingViewModal
         };
 
         uiManager.init({
@@ -239,29 +237,25 @@ document.addEventListener('DOMContentLoaded', () => {
             constants: { NETWORK_NODES, UPGRADES, INTEL_LOGS },
             puzzleManager
         });
-        uiManager.updateAgentNameDisplay(gameState.agentName || 'CIPHER');
-        audioManager.loadSettings();
 
-        difficultyManager.init(); // Initialize difficulty manager
+        audioManager.loadSettings();
+        difficultyManager.init();
         initGameState({
             UPGRADES,
             NETWORK_NODES,
             showMessage: uiManager.showMessage,
             addConsoleMessage: uiManager.addConsoleMessage,
             activityFeed: document.getElementById('activity-feed'),
-            difficultyManager // Add this dependency
+            difficultyManager
         });
 
         const wasGameLoaded = loadGame();
 
-        if (gameState.agentName) {
-            postLoginInitialization(wasGameLoaded);
-        } else {
-            uiManager.showView('login');
-        }
+        // This function now runs after a valid save is confirmed (either new or loaded)
+        runPostLoadInitialization(wasGameLoaded);
     }
 
-    function postLoginInitialization(wasGameLoaded) {
+    function runPostLoadInitialization(wasGameLoaded) {
         uiManager.updateAgentNameDisplay(gameState.agentName);
         gameLoop.init({
             uiManager,
@@ -270,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
             handleGameComplete,
             checkMissionUnlocks,
             INTEL_LOGS,
-            difficultyManager, // Pass difficultyManager to gameLoop
+            difficultyManager,
             elements: {
                 navTabs, mainNavTabs, gameHeader, viewContents, terminalContainer, hackProgressBar, hackingConsole,
                 hackingViewTitle, abortHackBtn, traceLevelIndicator, creditsIndicator,
@@ -280,8 +274,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 timedInputTimer, timedInputField, bypassFirewallBtn, extractDataBtn,
                 messageModal, modalTitle, modalMessage, modalCloseBtn, gameOverModal, saveGameBtn, loadGameBtn, deleteSaveBtn,
                 restartGameBtn, loadFromGameOverBtn, gameCompleteModal, newGameBtn,
-                networkMapGrid, dataLogsList, upgradesGrid, agentNameDisplay, agentNameInput, loginErrorMessage,
-                hackingViewModal // Pass the hacking modal element
+                networkMapGrid, dataLogsList, upgradesGrid, agentNameDisplay,
+                hackingViewModal
             }
         });
 
@@ -289,21 +283,22 @@ document.addEventListener('DOMContentLoaded', () => {
             puzzleContainer, puzzleFeedback, resetPuzzleBtn, sequencePuzzleArea, sequenceInstructions, codeSequenceDisplay,
             pathfindingPuzzleArea, pathfindingGrid, timedInputPuzzleArea, timedInputSequence, timedInputTimer, timedInputField,
             hackingConsole, traceLevelIndicator, hackScoreDisplay, statusIndicator, audioManager,
-            showMessage: uiManager.showMessage, 
+            showMessage: uiManager.showMessage,
             addConsoleMessage: uiManager.addConsoleMessage,
-            difficultyManager: difficultyManager, // Pass difficultyManager to puzzleManager
+            difficultyManager: difficultyManager,
             triggerScreenShake: uiManager.triggerScreenShake
         }, {
             updateTraceLevel, updateHackScore, onPuzzleSuccess, onPuzzleFail
         }, {
             getGameStates: () => ({
-                traceLevel: gameState.traceLevel, 
-                hackScore: gameState.hackScore, 
-                purchasedUpgrades: gameState.purchasedUpgrades, 
-                firewallBypassed: gameState.firewallBypassed, 
+                traceLevel: gameState.traceLevel,
+                hackScore: gameState.hackScore,
+                purchasedUpgrades: gameState.purchasedUpgrades,
+                firewallBypassed: gameState.firewallBypassed,
                 dataExtracted: gameState.dataExtracted
             })
         });
+
         uiManager.showView('sanctuary');
         if (wasGameLoaded) {
             uiManager.addConsoleMessage(document.getElementById('activity-feed'), 'SYSTEM', 'Save data loaded successfully.', 'text-[#00F0FF]');
@@ -314,59 +309,20 @@ document.addEventListener('DOMContentLoaded', () => {
         uiManager.initializeUpgradesUI();
         uiManager.renderDataLogs();
     }
-    
+
     // --- Event Listeners ---
     startHackButton.addEventListener('click', () => {
         const firstNode = NETWORK_NODES.find(node => !node.isLocked);
         if (firstNode) {
-            // uiManager.showView('hacking'); // Removed: gameLoop.start will now show the modal
             gameLoop.start(firstNode);
         }
     });
 
-    function handleLogin() {
-        const agentName = agentNameInput.value.trim();
-        if (agentName.length < 3) {
-            uiManager.displayLoginError('Agent codename must be at least 3 characters long.');
-            audioManager.play('buttonClick');
-            return;
-        }
-        uiManager.clearLoginError();
-        gameState.agentName = agentName;
-        saveGame();
-        postLoginInitialization(false);
-        uiManager.addConsoleMessage(document.getElementById('activity-feed'), 'SYSTEM', `Welcome, Agent ${agentName.toUpperCase()}.`, 'text-[#00FF99]');
-        audioManager.play('buttonClick');
-    }
-
-    loginBtn.addEventListener('click', handleLogin);
-
-    agentNameInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            handleLogin();
-        }
-    });
-
-    newGameBtnLogin.addEventListener('click', () => {
-        uiManager.showMessage(
-            'Start New Game?',
-            'This will permanently delete any saved progress. Are you sure?',
-            true, true,
-            () => {
-                resetGame();
-                uiManager.showMessage('Game Reset', 'All progress has been cleared. The application will now restart.', false);
-                setTimeout(() => location.reload(), 2000);
-            }
-        );
-    });
-
     abortHackBtn.addEventListener('click', gameLoop.abort);
-    closeHackingModalBtn.addEventListener('click', gameLoop.abort); // New: Close button for hacking modal
+    closeHackingModalBtn.addEventListener('click', gameLoop.abort);
 
-    // This check is necessary because the boss button is static HTML and might not exist if the HTML is changed.
     if (breachBossBtn) {
         breachBossBtn.addEventListener('click', () => {
-            // Find the boss node data from the game constants
             const bossNode = NETWORK_NODES.find(node => node.isBoss);
             if (bossNode && !bossNode.isLocked) {
                 gameLoop.start(bossNode);
@@ -379,9 +335,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     networkMapGrid.addEventListener('click', handleNetworkNodeClick);
     upgradesGrid.addEventListener('click', handleUpgradePurchase);
-    
+
     saveGameBtn.addEventListener('click', () => {
-        if (gameState.currentView === 'hacking' || hackingViewModal.classList.contains('modal-show')) { // Check if hacking modal is open
+        if (hackingViewModal.classList.contains('modal-show')) {
             uiManager.showMessage('Action Unavailable', 'Cannot save during an active breach.', true);
             return;
         }
@@ -395,13 +351,12 @@ document.addEventListener('DOMContentLoaded', () => {
             false, true,
             () => {
                 performLoadGame();
-            
             }
         );
     });
 
     function performLoadGame() {
-        if (gameState.currentView === 'hacking' || hackingViewModal.classList.contains('modal-show')) { // Check if hacking modal is open
+        if (hackingViewModal.classList.contains('modal-show')) {
             uiManager.showMessage('Action Unavailable', 'Cannot load a game during an active breach.', true);
             return;
         }
@@ -417,12 +372,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 uiManager.showMessage('Game Loaded', 'Your progress has been restored.', false);
                 uiManager.addConsoleMessage(document.getElementById('activity-feed'), 'SYSTEM', 'Session progress loaded.', 'text-[#00F0FF]');
                 break;
-            case false: // No save file
+            case false:
                 uiManager.showMessage('Load Failed', 'No save data found in this browser.', true);
                 break;
-            case 'corrupted': // Corrupted save file
-                // Message is shown from gameState.js. Reload to reflect reset state.
-                setTimeout(() => location.reload(), 2000);
+            case 'corrupted':
+                setTimeout(() => window.location.href = 'login.html', 2000);
                 break;
         }
     }
@@ -435,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             () => {
                 resetGame();
                 uiManager.showMessage('Game Reset', 'All progress has been cleared. The application will now restart.', false);
-                setTimeout(() => location.reload(), 2000);
+                setTimeout(() => window.location.href = 'login.html', 2000);
             }
         );
     });
@@ -484,7 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Game Over / Win Modal Listeners
     restartGameBtn.addEventListener('click', () => {
-        location.reload();
+        resetGame();
+        window.location.href = 'login.html';
     });
 
     loadFromGameOverBtn.addEventListener('click', () => {
@@ -492,14 +447,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     newGameBtn.addEventListener('click', () => {
-        localStorage.removeItem('breachProtocolSaveData');
-        location.reload();
+        resetGame();
+        window.location.href = 'login.html';
     });
 
-    // Start background music on first user interaction
     document.body.addEventListener('click', () => {
         audioManager.playBgMusic();
     }, { once: true });
 
+    // --- Final Initialization Call ---
     initializeGame();
 });
