@@ -2,9 +2,21 @@
 import { PUZZLE_TYPES } from './puzzles/puzzleConstants.js';
 
 export const UPGRADES = {
-    iceBreaker: { cost: 400, name: "ICE Breaker Suite" },
-    sequenceDecryptor: { cost: 600, name: "Sequence Decryptor" },
-    creditScrubber: { cost: 350, name: "Credit Scrubber" }
+    iceBreaker: {
+        cost: 400,
+        name: "ICE Breaker Suite",
+        description: "Advanced algorithms to slow down Intrusion Countermeasure Electronics. Reduces trace level increase rate by 30%."
+    },
+    sequenceDecryptor: {
+        cost: 600,
+        name: "Sequence Decryptor",
+        description: "Pre-calculates common encryption patterns. Reduces required puzzle sequence length by 1."
+    },
+    creditScrubber: {
+        cost: 350,
+        name: "Credit Scrubber",
+        description: "A sophisticated laundering tool that finds hidden credit caches. Increases base credit rewards from hacks by 50%."
+    }
 };
 
 export const NETWORK_NODES = [
